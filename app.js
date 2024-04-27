@@ -18,11 +18,10 @@ function processContent(content) {
 
     participantLines.forEach(line => {
         // Limpar linha de aspas e espaços em branco antes de processar
-        line = line.replace(/^["\s]+|["\s]+$/g, '');
-        const parts = line.split('\t').map(part => part.trim()); // Dividir a linha em partes e remover espaços em branco
+        line = line.replace(/^["\s]+|["\s]+$/g, '').trim();
+        const parts = line.split('\t');
         if (parts.length > 1) {
-            let name = parts[0].replace(/["']+/g, '').trim();  // Remover aspas do nome e espaços em branco
-            name = name.replace(/\(Não verificado\)/, '').trim();  // Remover a frase "(Não verificado)"
+            let name = parts[0].replace(/["']+/g, '').replace(/\(Não verificado\)/, '').trim();
             if (name && name !== 'Nome' && !uniqueNames.has(name)) {
                 uniqueNames.add(name);
                 const initial = name[0].toUpperCase();
@@ -34,20 +33,21 @@ function processContent(content) {
         }
     });
 
-    // Ordenar os nomes dentro de cada grupo de inicial
-    for (const initial in groupedByInitial) {
+    // Ordenar os nomes dentro de cada grupo de inicial e globalmente
+    const sortedInitials = Object.keys(groupedByInitial).sort();
+    sortedInitials.forEach(initial => {
         groupedByInitial[initial].sort();
-    }
+    });
 
-    displayData(groupedByInitial);
+    displayData(groupedByInitial, sortedInitials);
 }
 
-function displayData(groupedByInitial) {
+function displayData(groupedByInitial, sortedInitials) {
     const outputDiv = document.getElementById('output');
     let tableHtml = '<table>';  // Start table
     tableHtml += '<thead><tr><th>Inicial</th><th>Nome</th></tr></thead><tbody>';  // Add table headers
 
-    Object.keys(groupedByInitial).sort().forEach(initial => {
+    sortedInitials.forEach(initial => {
         groupedByInitial[initial].forEach(name => {
             tableHtml += `<tr><td>${initial}</td><td>${name}</td></tr>`;  // Add rows with initial and name
         });
