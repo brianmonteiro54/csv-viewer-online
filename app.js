@@ -6,26 +6,28 @@ document.getElementById('csvFileInput').addEventListener('change', function(even
             const content = e.target.result;
             processContent(content);
         };
-        reader.readAsText(file, 'UTF-16'); // Lendo como UTF-16
+        reader.readAsText(file, 'UTF-16'); // Reading as UTF-16
     }
 });
 
 function processContent(content) {
     const lines = content.split(/\r?\n/);
+    const uniqueNames = new Set();
     const groupedByInitial = {};
 
-    // Processar cada linha, começando após o cabeçalho
-    lines.slice(10).forEach(line => {
-        let name = line.split('\t')[0].trim(); // Assumindo que o nome está na primeira coluna
-        name = name.replace(/["']+/g, ''); // Remover aspas
-        name = name.replace(/\(Não verificado\)/, '').trim(); // Remover sufixo (Não verificado)
+    lines.slice(10).forEach(line => { // Skip headers
+        let name = line.split('\t')[0].replace(/["']+/g, '').replace(/\(Não verificado\)/, '').trim();
         if (name && name !== 'Nome') {
-            const initial = name[0].toUpperCase();
-            if (!groupedByInitial[initial]) {
-                groupedByInitial[initial] = new Set(); // Usar um Set para evitar nomes duplicados
-            }
-            groupedByInitial[initial].add(name);
+            uniqueNames.add(name);
         }
+    });
+
+    Array.from(uniqueNames).sort().forEach(name => {
+        const initial = name[0].toUpperCase();
+        if (!groupedByInitial[initial]) {
+            groupedByInitial[initial] = [];
+        }
+        groupedByInitial[initial].push(name);
     });
 
     displayData(groupedByInitial);
@@ -33,19 +35,15 @@ function processContent(content) {
 
 function displayData(groupedByInitial) {
     const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = '<table><thead><tr><th>Inicial</th><th>Nome</th></tr></thead><tbody>'; // Iniciar tabela
+    let tableHtml = '<table>'; // Start table
+    tableHtml += '<thead><tr><th>Inicial</th><th>Nome</th></tr></thead><tbody>'; // Add table headers
 
-    // Ordenar as iniciais
-    const sortedInitials = Object.keys(groupedByInitial).sort();
-
-    // Ordenar os nomes dentro de cada grupo de inicial e criar as linhas da tabela
-    sortedInitials.forEach(initial => {
-        // Converter Set para Array e ordenar
-        const namesArray = Array.from(groupedByInitial[initial]).sort();
-        namesArray.forEach(name => {
-            outputDiv.innerHTML += `<tr><td>${initial}</td><td>${name}</td></tr>`; // Adicionar linhas à tabela
+    Object.keys(groupedByInitial).sort().forEach(initial => {
+        groupedByInitial[initial].forEach(name => {
+            tableHtml += `<tr><td>${initial}</td><td>${name}</td></tr>`; // Add rows with initial and name
         });
     });
 
-    outputDiv.innerHTML += '</tbody></table>'; // Fechar tabela
+    tableHtml += '</tbody></table>'; // End table
+    outputDiv.innerHTML = tableHtml;
 }
