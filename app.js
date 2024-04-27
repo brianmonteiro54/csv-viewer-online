@@ -1,6 +1,7 @@
-
 document.getElementById('csvFileInput').addEventListener('change', function(event) {
     Papa.parse(event.target.files[0], {
+        header: true,
+        skipEmptyLines: true,
         complete: function(results) {
             processData(results.data);
         }
@@ -12,14 +13,18 @@ function processData(data) {
     let groupedByInitial = {};
 
     data.forEach(row => {
-        let name = row[0].replace('(Não verificado)', '').trim();  // Assuming names are in the first column
-        if (!uniqueNames.has(name)) {
-            uniqueNames.add(name);
-            let initial = name[0].toUpperCase();
-            if (!groupedByInitial[initial]) {
-                groupedByInitial[initial] = [];
+        // Detectando a coluna correta para 'Nome'
+        let nameColumn = Object.keys(row).find(key => key.toLowerCase().includes('nome'));
+        if (nameColumn) {
+            let name = row[nameColumn].replace('(Não verificado)', '').trim();
+            if (!uniqueNames.has(name)) {
+                uniqueNames.add(name);
+                let initial = name[0].toUpperCase();
+                if (!groupedByInitial[initial]) {
+                    groupedByInitial[initial] = [];
+                }
+                groupedByInitial[initial].push(name);
             }
-            groupedByInitial[initial].push(name);
         }
     });
 
