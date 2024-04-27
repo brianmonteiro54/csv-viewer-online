@@ -11,18 +11,18 @@ document.getElementById('csvFileInput').addEventListener('change', function(even
 });
 
 function processContent(content) {
-    const lines = content.split(/\r?\n/);
+    const lines = content.split(/\\r?\\n/);
     const participantLines = lines.slice(10);  // Pular cabeçalhos
     const uniqueNames = new Set();
     const groupedByInitial = {};
 
     participantLines.forEach(line => {
         // Limpar linha de aspas e espaços em branco antes de processar
-        line = line.replace(/^["\s]+|["\s]+$/g, '');
-        const parts = line.split('\t').map(part => part.trim()); // Dividir a linha em partes e remover espaços em branco
+        line = line.replace(/^["\\s]+|["\\s]+$/g, '');
+        const parts = line.split('\\t').map(part => part.trim()); // Dividir a linha em partes e remover espaços em branco
         if (parts.length > 1) {
             let name = parts[0].replace(/["']+/g, '').trim();  // Remover aspas do nome e espaços em branco
-            name = name.replace(/\(Não verificado\)/, '').trim();  // Remover a frase "(Não verificado)"
+            name = name.replace(/\\(Não verificado\\)/, '').trim();  // Remover a frase "(Não verificado)"
             if (name && name !== 'Nome' && !uniqueNames.has(name)) {
                 uniqueNames.add(name);
                 const initial = name[0].toUpperCase();
@@ -33,6 +33,11 @@ function processContent(content) {
             }
         }
     });
+
+    // Ordenar os nomes dentro de cada grupo alfabeticamente
+    for (let initial in groupedByInitial) {
+        groupedByInitial[initial].sort();
+    }
 
     displayData(groupedByInitial);
 }
