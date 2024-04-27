@@ -21,7 +21,6 @@ body {
 table {
     border-collapse: collapse;
     margin-top: 20px; /* Margem acima da tabela */
-    width: 80%; /* Largura da tabela */
     background: white;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
