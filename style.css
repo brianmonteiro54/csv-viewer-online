@@ -1,26 +1,9 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f4f4f4;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-table {
-    border-collapse: collapse;
-    width: 60%;
-    background: white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
+/* O conteúdo do CSS permanece o mesmo até as definições da tabela */
 
 th, td {
-    text-align: left;
+    border: 1px solid #ddd;
     padding: 8px;
-    border-bottom: 1px solid #ddd;
+    text-align: left;
 }
 
 th {
@@ -28,6 +11,18 @@ th {
     color: white;
 }
 
+tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+table {
+    border-collapse: collapse;
+    margin: auto;  /* Centraliza a tabela horizontalmente */
+    width: 80%;  /* Largura da tabela */
+}
+
 #output {
-    overflow-x: auto;
+    margin-top: 20px;
+    width: 100%;
+    overflow-x: auto;  /* Permite rolagem se a tabela for muito larga */
 }
