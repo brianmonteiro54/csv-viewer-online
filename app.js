@@ -11,16 +11,18 @@ document.getElementById('csvFileInput').addEventListener('change', function(even
 });
 
 function processContent(content) {
-    const lines = content.split(/\r?\n/);
+    const lines = content.split(/\\r?\\n/);
     const participantLines = lines.slice(10);  // Pular cabeçalhos
     const uniqueNames = new Set();
     const groupedByInitial = {};
 
     participantLines.forEach(line => {
         if (line.trim()) {
-            const parts = line.split('\t');
+            // Remover aspas extras e espaços em branco
+            line = line.replace(/["]+/g, '').trim();
+            const parts = line.split('\\t');
             if (parts.length > 1) {
-                let name = parts[0].replace('(Não verificado)', '').trim();
+                let name = parts[0].trim();  // Aplicar trim novamente caso tenha espaços antes ou depois do nome
                 if (name && name !== 'Nome' && !uniqueNames.has(name)) {
                     uniqueNames.add(name);
                     let initial = name[0].toUpperCase();
