@@ -21,7 +21,7 @@ function processContent(content) {
             const parts = line.split('\t');
             if (parts.length > 1) {
                 let name = parts[0].replace('(Não verificado)', '').trim();
-                if (name && !uniqueNames.has(name)) {
+                if (name && name !== 'Nome' && !uniqueNames.has(name)) {
                     uniqueNames.add(name);
                     let initial = name[0].toUpperCase();
                     if (!groupedByInitial[initial]) {
@@ -38,9 +38,10 @@ function processContent(content) {
 
 function displayData(groupedByInitial) {
     const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = '';  // Clear previous data
+    outputDiv.innerHTML = '<table>';  // Start table
     Object.keys(groupedByInitial).sort().forEach(initial => {
-        const namesList = groupedByInitial[initial].join('<br>');
-        outputDiv.innerHTML += `<h2>${initial}</h2><p>${namesList}</p>`;
+        const namesList = groupedByInitial[initial].map(name => `<tr><td>${name}</td></tr>`).join('');
+        outputDiv.innerHTML += `<tr><th>${initial}</th></tr>${namesList}`;
     });
+    outputDiv.innerHTML += '</table>';  // End table
 }
