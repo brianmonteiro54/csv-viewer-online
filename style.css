@@ -18,7 +18,6 @@ tbody tr:nth-child(odd) {
 table {
     border-collapse: collapse;
     margin: auto;  /* Centraliza a tabela horizontalmente */
-    width: 80%;  /* Largura da tabela */
 }
 
 #output {
