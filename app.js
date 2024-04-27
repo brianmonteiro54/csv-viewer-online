@@ -12,28 +12,29 @@ document.getElementById('csvFileInput').addEventListener('change', function(even
 
 function processContent(content) {
     const lines = content.split(/\r?\n/);
-    const participantLines = lines.slice(10); // Pular cabeçalhos
+    const uniqueNamesSet = new Set(); // Usar um Set para manter os nomes únicos
     const groupedByInitial = {};
 
-    participantLines.forEach(line => {
-        // Limpar linha de aspas e espaços em branco antes de processar
-        line = line.replace(/^["\s]+|["\s]+$/g, '').trim();
-        const parts = line.split('\t');
-        if (parts.length > 1) {
-            let name = parts[0].replace(/["']+/g, '').replace(/\(Não verificado\)/, '').trim();
-            if (name && name !== 'Nome') {
-                const initial = name[0].toUpperCase();
-                if (!groupedByInitial[initial]) {
-                    groupedByInitial[initial] = [];
-                }
-                groupedByInitial[initial].push(name);
-            }
+    lines.slice(10).forEach(line => { // Pular cabeçalhos
+        const name = line.split('\t')[0]
+                        .replace(/["']+/g, '')
+                        .replace(/\(Não verificado\)/, '')
+                        .trim();
+        if (name && name !== 'Nome') {
+            uniqueNamesSet.add(name);
         }
     });
 
-    // Ordenar os nomes dentro de cada grupo de inicial e globalmente
-    Object.keys(groupedByInitial).forEach(initial => {
-        groupedByInitial[initial].sort((a, b) => a.localeCompare(b));
+    // Converter o Set em Array para poder ordenar
+    const uniqueNames = Array.from(uniqueNamesSet).sort((a, b) => a.localeCompare(b));
+
+    // Agrupar os nomes únicos por sua inicial
+    uniqueNames.forEach(name => {
+        const initial = name[0].toUpperCase();
+        if (!groupedByInitial[initial]) {
+            groupedByInitial[initial] = [];
+        }
+        groupedByInitial[initial].push(name);
     });
 
     displayData(groupedByInitial);
@@ -41,18 +42,13 @@ function processContent(content) {
 
 function displayData(groupedByInitial) {
     const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = ''; // Clear previous data
-    const sortedInitials = Object.keys(groupedByInitial).sort();
+    outputDiv.innerHTML = '<table><thead><tr><th>Inicial</th><th>Nome</th></tr></thead><tbody>'; // Start table and add headers
 
-    let tableHtml = '<table>'; // Start table
-    tableHtml += '<thead><tr><th>Inicial</th><th>Nome</th></tr></thead><tbody>'; // Add table headers
-
-    sortedInitials.forEach(initial => {
+    Object.keys(groupedByInitial).sort().forEach(initial => {
         groupedByInitial[initial].forEach(name => {
-            tableHtml += `<tr><td>${initial}</td><td>${name}</td></tr>`; // Add rows with initial and name
+            outputDiv.innerHTML += `<tr><td>${initial}</td><td>${name}</td></tr>`; // Add rows with initial and name
         });
     });
 
-    tableHtml += '</tbody></table>'; // End table
-    outputDiv.innerHTML = tableHtml;
+    outputDiv.innerHTML += '</tbody></table>'; // End table
 }
