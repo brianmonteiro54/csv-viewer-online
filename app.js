@@ -1,11 +1,15 @@
 document.getElementById('csvFileInput').addEventListener('change', function(event) {
-    Papa.parse(event.target.files[0], {
-        header: true,
-        skipEmptyLines: true,
-        complete: function(results) {
-            processData(results.data);
-        }
-    });
+    const file = event.target.files[0];
+    if (file) {
+        document.getElementById('output').innerHTML = '<p>Carregando arquivo...</p>';
+        Papa.parse(file, {
+            header: true,
+            skipEmptyLines: true,
+            complete: function(results) {
+                processData(results.data);
+            }
+        });
+    }
 });
 
 function processData(data) {
@@ -13,18 +17,20 @@ function processData(data) {
     let groupedByInitial = {};
 
     data.forEach(row => {
-        // Detectando a coluna correta para 'Nome'
+        // Encontrando a coluna de nomes
         let nameColumn = Object.keys(row).find(key => key.toLowerCase().includes('nome'));
         if (nameColumn) {
-            let name = row[nameColumn].replace('(Não verificado)', '').trim();
-            if (!uniqueNames.has(name)) {
-                uniqueNames.add(name);
-                let initial = name[0].toUpperCase();
-                if (!groupedByInitial[initial]) {
-                    groupedByInitial[initial] = [];
+            let names = row[nameColumn].split(';').map(name => name.replace('(Não verificado)', '').trim());
+            names.forEach(name => {
+                if (!uniqueNames.has(name)) {
+                    uniqueNames.add(name);
+                    let initial = name[0].toUpperCase();
+                    if (!groupedByInitial[initial]) {
+                        groupedByInitial[initial] = [];
+                    }
+                    groupedByInitial[initial].push(name);
                 }
-                groupedByInitial[initial].push(name);
-            }
+            });
         }
     });
 
@@ -34,8 +40,12 @@ function processData(data) {
 function displayData(groupedByInitial) {
     const outputDiv = document.getElementById('output');
     outputDiv.innerHTML = '';  // Clear previous data
-    Object.keys(groupedByInitial).sort().forEach(initial => {
-        const namesList = groupedByInitial[initial].join('<br>');
-        outputDiv.innerHTML += `<h2>${initial}</h2><p>${namesList}</p>`;
-    });
+    if (Object.keys(groupedByInitial).length === 0) {
+        outputDiv.innerHTML = '<p>Nenhum dado válido encontrado.</p>';
+    } else {
+        Object.keys(groupedByInitial).sort().forEach(initial => {
+            const namesList = groupedByInitial[initial].join('<br>');
+            outputDiv.innerHTML += `<h2>${initial}</h2><p>${namesList}</p>`;
+        });
+    }
 }
