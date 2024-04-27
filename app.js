@@ -38,12 +38,16 @@ function processContent(content) {
 
 function displayData(groupedByInitial) {
     const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = '<table>';  // Start table
+    let tableHtml = '<table>';  // Start table
+
+    tableHtml += '<thead><tr><th>Inicial</th><th>Nome</th></tr></thead><tbody>';  // Add table headers
+
     Object.keys(groupedByInitial).sort().forEach(initial => {
-        outputDiv.innerHTML += `<tr><th colspan="2">${initial}</th></tr>`;  // Add a header row for each initial
         groupedByInitial[initial].forEach(name => {
-            outputDiv.innerHTML += `<tr><td>${name}</td></tr>`;  // Add each name in a new row
+            tableHtml += `<tr><td>${initial}</td><td>${name}</td></tr>`;  // Add rows with initial and name
         });
     });
-    outputDiv.innerHTML += '</table>';  // End table
+
+    tableHtml += '</tbody></table>';  // End table
+    outputDiv.innerHTML = tableHtml;
 }
