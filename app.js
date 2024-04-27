@@ -1,4 +1,3 @@
-
 document.getElementById('csvFileInput').addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file) {
@@ -22,7 +21,8 @@ function processContent(content) {
         line = line.replace(/^["\s]+|["\s]+$/g, '');
         const parts = line.split('\t').map(part => part.trim()); // Dividir a linha em partes e remover espaços em branco
         if (parts.length > 1) {
-            const name = parts[0].replace(/["']+/g, '').trim();  // Remover aspas do nome e espaços em branco
+            let name = parts[0].replace(/["']+/g, '').trim();  // Remover aspas do nome e espaços em branco
+            name = name.replace(/\(Não verificado\)/, '').trim();  // Remover a frase "(Não verificado)"
             if (name && name !== 'Nome' && !uniqueNames.has(name)) {
                 uniqueNames.add(name);
                 const initial = name[0].toUpperCase();
