@@ -40,8 +40,10 @@ function displayData(groupedByInitial) {
     const outputDiv = document.getElementById('output');
     outputDiv.innerHTML = '<table>';  // Start table
     Object.keys(groupedByInitial).sort().forEach(initial => {
-        const namesList = groupedByInitial[initial].map(name => `<tr><td>${name}</td></tr>`).join('');
-        outputDiv.innerHTML += `<tr><th>${initial}</th></tr>${namesList}`;
+        outputDiv.innerHTML += `<tr><th colspan="2">${initial}</th></tr>`;  // Add a header row for each initial
+        groupedByInitial[initial].forEach(name => {
+            outputDiv.innerHTML += `<tr><td>${name}</td></tr>`;  // Add each name in a new row
+        });
     });
     outputDiv.innerHTML += '</table>';  // End table
 }
