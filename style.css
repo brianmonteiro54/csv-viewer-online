@@ -4,15 +4,18 @@ body {
     padding: 0;
     background: #f4f4f4;
     color: #333;
-    display: flex;
-    flex-direction: column; /* Orientação da flexbox */
-    justify-content: center; /* Alinhamento vertical ao centro */
-    align-items: center; /* Alinhamento horizontal ao centro */
-    height: 100vh; /* Tela cheia */
+    text-align: center; /* Centraliza o conteúdo textual */
 }
 
 #csvFileInput {
     margin: 20px 0; /* Margem para separar do botão */
+}
+
+#output {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza os itens de #output horizontalmente */
+    width: 100%;
 }
 
 table {
