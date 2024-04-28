@@ -11,7 +11,7 @@ document.getElementById('csvFileInput').addEventListener('change', function(even
 });
 
 function capitalizeWords(name) {
-    return name.split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+    return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
 }
 
 function processContent(content) {
@@ -20,9 +20,9 @@ function processContent(content) {
     const groupedByInitial = {};
 
     lines.slice(10).forEach(line => {
-        if (!line.startsWith('3.')) { // Verifica se a linha não começa com "3."
+        if (!line.startsWith('3.')) {  // Verifica se a linha não começa com "3."
             let name = line.split('\t')[0].replace(/["']+/g, '').replace(/\(Não verificado\)/, '').trim();
-            name = capitalizeWords(name); // Capitaliza cada palavra do nome
+            name = capitalizeWords(name);  // Capitaliza cada palavra do nome
             if (name && name !== 'Nome') {
                 uniqueNames.add(name);
             }
@@ -44,12 +44,26 @@ function displayData(groupedByInitial) {
     const outputDiv = document.getElementById('output');
     outputDiv.innerHTML = ''; //Limpa os dados anteriores
     let tableHtml = '<table>'; //Iniciar tabela
-    tableHtml += '<thead><tr><th>Inicial</th><th>Nomes</th></tr></thead><tbody>'; //Adiciona cabeçalhos de tabela
+    tableHtml += `<thead><tr><th>Inicial</th><th>Nomes <button id="copyButton" class="tooltip">&#x1f4cb;<span class="tooltiptext">Copiar</span></button></th></tr></thead><tbody>`; // Add copy button to header
 
     Object.keys(groupedByInitial).sort().forEach(initial => {
-        tableHtml += `<tr><td>${initial}</td><td>${groupedByInitial[initial].join('<br>')}</td></tr>`; // Adiciona todos os nomes na mesma célula separados por <br>
+        tableHtml += `<tr><td>${initial}</td><td>${groupedByInitial[initial].join('<br>')}</td></tr>`; // Add names in the same cell
     });
 
     tableHtml += '</tbody></table>'; // Finalizar tabela
     outputDiv.innerHTML = tableHtml; // Insira a tabela na página
+
+    // Configura a funcionalidade do botão de cópia
+    document.getElementById('copyButton').addEventListener('click', function() {
+        copyNamesToClipboard(groupedByInitial);
+    });
+}
+
+function copyNamesToClipboard(groupedByInitial) {
+    const allNames = Object.values(groupedByInitial).flat().join('\n');
+    navigator.clipboard.writeText(allNames).then(() => {
+        alert('Nomes copiados para a área de transferência!');
+    }).catch(err => {
+        console.error('Erro ao copiar nomes: ', err);
+    });
 }

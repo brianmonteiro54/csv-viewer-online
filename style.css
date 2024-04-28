@@ -66,3 +66,37 @@ th:first-child, td:first-child {
 tbody tr:nth-child(odd) {
     background-color: #f2f2f2;
 }
+/* Estilo para o botão de cópia */
+.copy-button {
+    cursor: pointer; /* Muda o cursor para indicar que é clicável */
+    display: inline-block;
+    margin-left: 5px; /* Espaço entre o texto e o botão */
+}
+
+/* Estilo para o tooltip */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 60px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Posicionamento do tooltip */
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -30px;
+}
+
+/* Exibir o tooltip ao passar o mouse */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
