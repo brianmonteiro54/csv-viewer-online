@@ -48,16 +48,19 @@ table {
     background: white;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-
+th {
+    background-color: #4CAF50;
+    color: white;
+}
 th, td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
 }
 
-th {
-    background-color: #4CAF50;
-    color: white;
+/* Estilo adicional para centralizar a letra inicial */
+th:first-child, td:first-child {
+    text-align: center; /* Centraliza o conteúdo da primeira célula de cada linha */
 }
 
 tbody tr:nth-child(odd) {

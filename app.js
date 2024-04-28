@@ -1,7 +1,3 @@
-function capitalizeWords(name) {
-    return name.split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
-}
-
 document.getElementById('csvFileInput').addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file) {
@@ -14,20 +10,31 @@ document.getElementById('csvFileInput').addEventListener('change', function(even
     }
 });
 
+function capitalizeWords(name) {
+    return name.split(' ').map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+}
+
 function processContent(content) {
     const lines = content.split(/\r?\n/);
+    const uniqueNames = new Set();
     const groupedByInitial = {};
 
     lines.slice(10).forEach(line => {
-        let name = line.split('\t')[0].replace(/["']+/g, '').replace(/\(Não verificado\)/, '').trim();
-        name = capitalizeWords(name); // Capitaliza cada palavra do nome
-        if (name && name !== 'Nome' && !name.startsWith('3.')) {
-            const initial = name[0].toUpperCase();
-            if (!groupedByInitial[initial]) {
-                groupedByInitial[initial] = new Set(); // Usar um Set para armazenar os nomes e evitar duplicatas
+        if (!line.startsWith('3.')) { // Verifica se a linha não começa com "3."
+            let name = line.split('\t')[0].replace(/["']+/g, '').replace(/\(Não verificado\)/, '').trim();
+            name = capitalizeWords(name); // Capitaliza cada palavra do nome
+            if (name && name !== 'Nome') {
+                uniqueNames.add(name);
             }
-            groupedByInitial[initial].add(name);
         }
+    });
+
+    Array.from(uniqueNames).sort((a, b) => a.localeCompare(b)).forEach(name => {
+        const initial = name[0].toUpperCase();
+        if (!groupedByInitial[initial]) {
+            groupedByInitial[initial] = [];
+        }
+        groupedByInitial[initial].push(name);
     });
 
     displayData(groupedByInitial);
@@ -35,16 +42,14 @@ function processContent(content) {
 
 function displayData(groupedByInitial) {
     const outputDiv = document.getElementById('output');
-    outputDiv.innerHTML = ''; // Limpar conteúdo existente
-    let tableHtml = '<table>'; // Iniciar tabela
-    tableHtml += '<thead><tr><th>Inicial</th><th>Nome</th></tr></thead><tbody>'; // Adicionar cabeçalhos da tabela
+    outputDiv.innerHTML = ''; //Limpa os dados anteriores
+    let tableHtml = '<table>'; //Iniciar tabela
+    tableHtml += '<thead><tr><th>Inicial</th><th>Nomes</th></tr></thead><tbody>'; //Adiciona cabeçalhos de tabela
 
     Object.keys(groupedByInitial).sort().forEach(initial => {
-        Array.from(groupedByInitial[initial]).sort((a, b) => a.localeCompare(b)).forEach(name => {
-            tableHtml += `<tr><td>${initial}</td><td>${name}</td></tr>`; // Adicionar linhas com inicial e nome
-        });
+        tableHtml += `<tr><td>${initial}</td><td>${groupedByInitial[initial].join('<br>')}</td></tr>`; // Adiciona todos os nomes na mesma célula separados por <br>
     });
 
     tableHtml += '</tbody></table>'; // Finalizar tabela
-    outputDiv.innerHTML = tableHtml; // Inserir a tabela na página
+    outputDiv.innerHTML = tableHtml; // Insira a tabela na página
 }
