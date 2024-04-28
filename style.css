@@ -6,6 +6,30 @@ body {
     color: #333;
     text-align: center; /* Centraliza o conteúdo textual */
 }
+footer {
+            background-color: #001632;
+            color: #FFFFFF;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+        }
+
+footer a {
+            color: #FFFFFF; /* Cor branca para os links */
+            text-decoration: none;
+        }
+
+        /* Media query para ajustar o posicionamento do rodapé em telas estreitas */
+        @media (max-width: 600px) {
+            footer {
+                position: absolute;
+                top: 0;
+                bottom: auto;
+		transform: rotate(-90deg); /* remove footer*/
+                transform-origin: top left; /* remove footer */
+
+}
+}
 
 #csvFileInput {
     margin: 20px 0; /* Margem para separar do botão */
