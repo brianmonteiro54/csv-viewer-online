@@ -23,9 +23,11 @@ function processContent(content) {
         if (!line.startsWith('3.')) {  // Verifica se a linha não começa com "3."
             let name = line.split('\t')[0].replace(/["']+/g, '')
                                          .replace(/\(Não verificado\)/gi, '')
-                                         .replace(/\(unverified\)/gi, '').trim();
+                                         .replace(/\(unverified\)/gi, '')
+                                         .replace(/Name/gi, '') // Remove 'Name' de forma insensível a maiúsculas e minúsculas
+                                         .trim();
             name = capitalizeWords(name);  // Capitaliza cada palavra do nome
-            if (name && name !== 'Nome') {
+            if (name && name !== 'Nome' && name !== 'Name') {
                 uniqueNames.add(name);
             }
         }
