@@ -25,6 +25,8 @@ function processContent(content) {
                                          .replace(/\(Não verificado\)/gi, '')
                                          .replace(/\(unverified\)/gi, '')
                                          .replace(/Name/gi, '') // Remove 'Name' de forma insensível a maiúsculas e minúsculas
+                                         .replace(/\(convidado\)/gi, '') // Remove '(convidado)' de forma insensível a maiúsculas e minúsculas
+                                         .replace(/\(guest\)/gi, '') // Remove '(guest)' de forma insensível a maiúsculas e minúsculas
                                          .trim();
             name = capitalizeWords(name);  // Capitaliza cada palavra do nome
             if (name && name !== 'Nome' && name !== 'Name') {
