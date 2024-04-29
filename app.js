@@ -21,7 +21,9 @@ function processContent(content) {
 
     lines.slice(10).forEach(line => {
         if (!line.startsWith('3.')) {  // Verifica se a linha não começa com "3."
-            let name = line.split('\t')[0].replace(/["']+/g, '').replace(/\(Não verificado\)/, '').replace(/\(unverified\)/, '').trim();
+            let name = line.split('\t')[0].replace(/["']+/g, '')
+                                         .replace(/\(Não verificado\)/gi, '')
+                                         .replace(/\(unverified\)/gi, '').trim();
             name = capitalizeWords(name);  // Capitaliza cada palavra do nome
             if (name && name !== 'Nome') {
                 uniqueNames.add(name);
