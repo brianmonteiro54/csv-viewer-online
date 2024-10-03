@@ -3,8 +3,11 @@ function checkAttendanceWithInput(groupedByInitial) {
     const userNamesInput = document.getElementById('alunosInput').value;
 
     if (userNamesInput) {
-        // Processar os nomes inseridos pelo usuário
-        const todosAlunos = userNamesInput.split('\n').map(aluno => normalizeName(aluno.trim()));
+        // Processar os nomes inseridos pelo usuário, removendo linhas vazias
+        const todosAlunos = userNamesInput.split('\n')
+            .map(aluno => normalizeName(aluno.trim()))  // Remove espaços em branco antes e depois dos nomes
+            .filter(aluno => aluno.length > 0);  // Remove linhas vazias
+
         const presentes = Object.values(groupedByInitial).flat().map(aluno => normalizeName(aluno));
 
         // Verificar quem faltou
