@@ -1,0 +1,103 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    color: #333;
+    text-align: center; /* Centraliza o conteúdo textual */
+}
+footer {
+            background-color: #001632;
+            color: #FFFFFF;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+        }
+
+footer a {
+            color: #FFFFFF; /* Cor branca para os links */
+            text-decoration: none;
+        }
+
+        /* Media query para ajustar o posicionamento do rodapé em telas estreitas */
+        @media (max-width: 600px) {
+            footer {
+                position: absolute;
+                top: 0;
+                bottom: auto;
+		transform: rotate(-90deg); /* remove footer*/
+                transform-origin: top left; /* remove footer */
+
+}
+}
+
+#csvFileInput {
+    margin: 20px 0; /* Margem para separar do botão */
+}
+
+#output {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza os itens de #output horizontalmente */
+    width: 100%;
+}
+
+table {
+    border-collapse: collapse;
+    margin-top: 20px; /* Margem acima da tabela */
+    background: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+/* Estilo adicional para centralizar a letra inicial */
+th:first-child, td:first-child {
+    text-align: center; /* Centraliza o conteúdo da primeira célula de cada linha */
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+/* Estilo para o botão de cópia */
+.copy-button {
+    cursor: pointer; /* Muda o cursor para indicar que é clicável */
+    display: inline-block;
+    margin-left: 5px; /* Espaço entre o texto e o botão */
+}
+
+/* Estilo para o tooltip */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 60px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Posicionamento do tooltip */
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -30px;
+}
+
+/* Exibir o tooltip ao passar o mouse */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
