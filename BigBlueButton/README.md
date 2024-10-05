@@ -12,7 +12,7 @@ Filtro de Entradas Indesejadas: Remove quaisquer entradas que não correspondem 
 ## Uso
 Para usar o formatador:
 1. Baixe o relatório de presença da sua reunião do BigBlueButton em formato CSV.
-2. Acesse https://brianmonteiro54.github.io/BigBlueButton/.
+2. Acesse [https://brianmonteiro54.github.io/BigBlueButton/](https://brianmonteiro54.github.io/csv-viewer-online/BigBlueButton/).
 3. Faça o upload do arquivo CSV baixado.
 
 O site processará o arquivo e exibirá uma tabela organizada com todos os participantes listados uma única vez e em ordem alfabética.
