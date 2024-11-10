@@ -47,7 +47,7 @@ document.getElementById('copy-to-clipboard-btn').addEventListener('click', funct
 });
 
 function processCSV(data) {
-    fetch('../teste/students.json')
+    fetch('students.json')
         .then(response => response.json())
         .then(studentsData => {
             const resultsTableBody = document.querySelector('#results-table tbody');
