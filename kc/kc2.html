@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Upload</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <input type="file" id="file-input">
+    <button id="copy-performance-btn">Copiar Desempenho</button>
+    <div id="performance-order-container" style="display: none;">
+        <textarea id="performance-order" rows="10" cols="50" placeholder="Insira a ordem dos nomes aqui... OBSERVAÇÃO: 𝐎 𝐧𝐨𝐦𝐞 𝐭𝐞𝐦 𝐪𝐮𝐞 𝐬𝐞𝐫 𝐞𝐱𝐚𝐭𝐚𝐦𝐞𝐧𝐭𝐞 𝐢𝐠𝐮𝐚𝐥 𝐚𝐨 𝐪𝐮𝐞 𝐞𝐬𝐭𝐚 𝐧𝐨 𝐜𝐚𝐧𝐯𝐚𝐬"></textarea>
+        <button id="copy-to-clipboard-btn">Copiar para Área de Transferência</button>
+    </div>
+    <div id="results" style="display: none;">
+        <table id="results-table">
+            <thead>
+                <tr>
+                    <th>Aluno</th>
+                    <th>KCs</th>
+                    <th>LABs</th>
+                    <th>Link</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <script src="papaparse.min.js"></script>
+    <script src="script2.js"></script>
+</body>
+</html>
