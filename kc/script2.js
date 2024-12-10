@@ -1,7 +1,7 @@
 document.getElementById('file-input').addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (!file) {
-        alert('Please upload a file before submitting.');
+        alert('Por favor, faça o upload de um arquivo antes de enviar.');
         return;
     }
 
@@ -125,21 +125,19 @@ function processCSV(data) {
                     })
                     .map(key => key.replace(/\s*\(\d+\)$/, '').trim());
 
-                    const pendingKCsStr = pendingKCs.length > 0 ? pendingKCs.join('\n') : "Nenhum";
+                const pendingKCsStr = pendingKCs.length > 0 ? pendingKCs.join('\n') : "Nenhum";
 
-                    const message = `Boa noite, ${fullName}. 𝐒𝐞𝐮 𝐝𝐞𝐬𝐞𝐦𝐩𝐞𝐧𝐡𝐨 𝐧𝐨𝐬 𝐊𝐂𝐬 está em ${kcScore}%, e 𝐬𝐞𝐮 𝐝𝐞𝐬𝐞𝐦𝐩𝐞𝐧𝐡𝐨 𝐧𝐨𝐬 𝐋𝐚𝐛𝐬 está em ${labScore}%. Você ainda tem alguns KCs/Labs pendentes:\n\n${pendingKCsStr}\n\nPara aprovação no curso AWS re/Start, os seguintes requisitos devem ser atendidos:\n\n1. 𝗖𝗼𝗻𝗰𝗹𝘂𝘀𝗮̃𝗼 𝗱𝗲 𝟭𝟬𝟬% 𝗱𝗼𝘀 𝗟𝗮𝗯𝗼𝗿𝗮𝘁𝗼́𝗿𝗶𝗼𝘀: Todos os laboratórios do curso devem ser completados com pontuação total.\n\n2. 𝑷𝒐𝒏𝒕𝒖𝒂𝒄̧𝒂̃𝒐 𝒆𝒎 𝑲𝑪'𝒔: Obter uma pontuação mínima de 70%.\n\n3. 𝗣𝗿𝗲𝘀𝗲𝗻𝗰̧𝗮 𝗻𝗮𝘀 𝗔𝘂𝗹𝗮𝘀: Manter uma presença mínima de 80% em todas as aulas.`;
-                    const emailSubject = `Desempenho Acadêmico - ${fullName} - Escola da Nuvem`;
-                    
-                    // Codifica o assunto e o corpo para o formato URL adequado
-                    const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(message)}`;
-                    
-                    const rowElement = document.createElement('tr');
+                const message = `Boa noite, ${fullName}. 𝐒𝐞𝐮 𝐝𝐞𝐬𝐞𝐦𝐩𝐞𝐧𝐡𝐨 𝐧𝐨𝐬 𝐊𝐂𝐬 está em ${kcScore}%, e 𝐬𝐞𝐮 𝐝𝐞𝐬𝐞𝐦𝐩𝐞𝐧𝐡𝐨 𝐧𝐨𝐬 𝐋𝐚𝐛𝐬 está em ${labScore}%. Você ainda tem alguns KCs/Labs pendentes:\n\n${pendingKCsStr}\n\nPara aprovação no curso AWS re/Start, os seguintes requisitos devem ser atendidos:\n\n1. 𝗖𝗼𝗻𝗰𝗹𝘂𝘀𝗮̃𝗼 𝗱𝗲 𝟭𝟬𝟬% 𝗱𝗼𝘀 𝗟𝗮𝗯𝗼𝗿𝗮𝘁𝗼́𝗿𝗶𝗼𝘀: Todos os laboratórios do curso devem ser completados com pontuação total.\n\n2. 𝑷𝒐𝒏𝒕𝒖𝒂𝒄̧𝒂̃𝒐 𝒆𝒎 𝑲𝑪'𝒔: Obter uma pontuação mínima de 70%.\n\n3. 𝗣𝗿𝗲𝘀𝗲𝗻𝗰̧𝗮 𝗻𝗮𝘀 𝗔𝘂𝗅𝗮𝘀: Manter uma presença mínima de 80% em todas as aulas.`;
+                const emailSubject = `Desempenho Acadêmico - ${fullName} - Escola da Nuvem`;
+                const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(message)}`;
+
+                const rowElement = document.createElement('tr');
                 rowElement.innerHTML = `
                     <td>${fullName}</td>
                     <td>${totalScore}</td>
                     <td>${labScore}</td>
                     <td>${kcScore}</td>
-                    <td><a href="${outlookUrl}" target="_blank">Enviar E-mail</a></td>
+                    <td><a href="${mailtoUrl}" target="_blank">Enviar E-mail</a></td>
                 `;
 
                 resultsTableBody.appendChild(rowElement);
