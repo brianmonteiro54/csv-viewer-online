@@ -25,19 +25,50 @@ document.getElementById('copy-to-clipboard-btn').addEventListener('click', funct
     document.querySelectorAll('#results-table tbody tr').forEach(row => {
         const cells = row.querySelectorAll('td');
         const name = cells[0].innerText.trim();
-        const score = cells[1].innerText.trim();
-        tableData[name] = score;
+        const totalScore = cells[1].innerText.trim();
+        const labScore = cells[2].innerText.trim();
+        const kcScore = cells[3].innerText.trim();
+
+        tableData[name] = {
+            total: totalScore,
+            lab: labScore,
+            kc: kcScore
+        };
     });
 
     let orderedPerformance = '';
+
     orderList.forEach(name => {
         if (tableData[name]) {
-            orderedPerformance += `${tableData[name]}%\n`;
+            // Remove o '%' se existir e substitui vírgula por ponto para parseFloat
+            let total = tableData[name].total.replace('%', '').replace(',', '.');
+            let lab = tableData[name].lab.replace('%', '').replace(',', '.');
+            let kc = tableData[name].kc.replace('%', '').replace(',', '.');
+
+            // Converte para float
+            total = parseFloat(total);
+            lab = parseFloat(lab);
+            kc = parseFloat(kc);
+
+            // Verifica se são números válidos
+            if (!isNaN(total) && !isNaN(lab) && !isNaN(kc)) {
+                // Formata com uma casa decimal e substitui ponto por vírgula
+                const totalFormatted = total.toFixed(1).replace('.', ',') + '%';
+                const labFormatted = lab.toFixed(1).replace('.', ',') + '%';
+                const kcFormatted = kc.toFixed(1).replace('.', ',') + '%';
+
+                // Adiciona à string com tabulações
+                orderedPerformance += `${totalFormatted}\t${labFormatted}\t${kcFormatted}\n`;
+            }
         }
     });
 
+    // Remove a última quebra de linha
+    orderedPerformance = orderedPerformance.trim();
+
+    // Copia para a área de transferência
     const textArea = document.createElement('textarea');
-    textArea.value = orderedPerformance.trim();
+    textArea.value = orderedPerformance;
     document.body.appendChild(textArea);
     textArea.select();
     document.execCommand('copy');
@@ -77,10 +108,10 @@ function processCSV(data) {
 
             filteredData.forEach(row => {
                 const fullName = row['Student'].split(', ').reverse().join(' ').trim();
-                const kcScore = row['Knowledge Checks Current Score']; //kc
-                const labScore = row['Labs Current Score']; //lab
-                const totalScore = row['Current Score']; //total
-                const email = row['SIS Login ID']; //usar o email do aluno
+                const kcScore = row['Knowledge Checks Current Score']; // KC
+                const labScore = row['Labs Current Score']; // LAB
+                const totalScore = row['Current Score']; // Total
+                const email = row['SIS Login ID']; // Email do aluno
 
                 // Ajuste para "KC" e "Lab"
                 const pendingKCs = Object.keys(row)
@@ -96,7 +127,7 @@ function processCSV(data) {
 
                 const pendingKCsStr = pendingKCs.length > 0 ? pendingKCs.join('\n') : "Nenhum";
 
-                const message = `Boa noite, ${fullName}. 𝐒𝐞𝐮 𝐝𝐞𝐬𝐞𝐦𝐩𝐞𝐧𝐡𝐨 𝐧𝐨𝐬 𝐊𝐂𝐬 está em ${kcScore}%, e 𝐬𝐞𝐮 𝐝𝐞𝐬𝐞𝐦𝐩𝐞𝐧𝐡𝐨 𝐧𝐨𝐬 𝐋𝐚𝐛𝐬 está em ${labScore}%. Você ainda tem alguns KCs/Labs pendentes:\n\n${pendingKCsStr}\n\nPara aprovação no curso AWS re/Start, os seguintes requisitos devem ser atendidos:\n\n1. 𝗖𝗼𝗻𝗰𝗹𝘂𝘀𝗮̃𝗼 𝗱𝗲 𝟭𝟬𝟬% 𝗱𝗼𝘀 𝗟𝗮𝗯𝗼𝗿𝗮𝘁𝗼́𝗿𝗶𝗼𝘀: Todos os laboratórios do curso devem ser completados com pontuação total.\n\n2. 𝑷𝒐𝒏𝒕𝒖𝒂𝒄̧𝒂̃𝒐 𝒆𝒎 𝑲𝑪'𝒔: Obter uma pontuação mínima de 70%.\n\n3. 𝗣𝗿𝗲𝘀𝗲𝗻𝗰̧𝗮 𝗻𝗮𝘀 𝗔𝘂𝗹𝗮𝘀: Manter uma presença mínima de 80% em todas as aulas.`;
+                const message = `Boa noite, ${fullName}. 𝐒𝐞𝐮 𝐝𝐞𝐬𝐞𝐦𝐩𝐞𝐧𝐡𝐨 𝐧𝐨𝐬 𝐊𝐂𝐬 está em ${kcScore}%, e 𝐬𝐞𝐮 𝐝𝐞𝐬𝐞𝐦𝐩𝐞𝐧𝐡𝐨 𝐧𝐨𝐬 𝐋𝐚𝐛𝐬 está em ${labScore}%. Você ainda tem alguns KCs/Labs pendentes:\n\n${pendingKCsStr}\n\nPara aprovação no curso AWS re/Start, os seguintes requisitos devem ser atendidos:\n\n1. 𝗖𝗼𝗻𝗰𝗹𝘂𝘀𝗮̃𝗼 𝗱𝗲 𝟭𝟬𝟬% 𝗱𝗼𝘀 𝗟𝗮𝗯𝗼𝗿𝗮𝘁𝗼́𝗿𝗶𝗼𝘀: Todos os laboratórios do curso devem ser completados com pontuação total.\n\n2. 𝑷𝒐𝒏𝒕𝒖𝒂𝒄̧𝒂̃𝒐 𝒆𝒎 𝑲𝑪'𝒔: Obter uma pontuação mínima de 70%.\n\n3. 𝗣𝗿𝗲𝘀𝗲𝗻𝗰̧𝗮 𝗻𝗮𝘀 𝗔𝘂𝗅𝗮𝘀: Manter uma presença mínima de 80% em todas as aulas.`;
                 const emailSubject = `Desempenho Acadêmico - ${fullName} - Escola da Nuvem`;
                 const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(message)}`;
 
