@@ -134,16 +134,15 @@ function processCSV(data) {
                     const mailtoUrl = `mailto:${email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(message)}`;
                     
                     const rowElement = document.createElement('tr');
-                    rowElement.innerHTML = `
-                        <td>${fullName}</td>
-                        <td>${kcScore}</td>
-                        <td>${labScore}</td>
-                        <td><a href="${mailtoUrl}" target="_blank">Enviar E-mail</a></td>
-                    `;
-                    
-                    resultsTableBody.appendChild(rowElement);
-                    
-                    
-                });
+                rowElement.innerHTML = `
+                    <td>${fullName}</td>
+                    <td>${totalScore}</td>
+                    <td>${labScore}</td>
+                    <td>${kcScore}</td>
+                    <td><a href="${outlookUrl}" target="_blank">Enviar E-mail</a></td>
+                `;
+
+                resultsTableBody.appendChild(rowElement);
             });
-    }
+        });
+}
