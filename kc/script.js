@@ -61,6 +61,8 @@ function processCSV(data) {
                     const kcScoreValue = kcScore ? parseFloat(kcScore.replace(',', '.')) : NaN;
                     const labScore = row['Labs Current Score'];
                     const labScoreValue = labScore ? parseFloat(labScore.replace(',', '.')) : NaN;
+                    const totalScore = row['Current Score'];
+                    const totalScoreValue = totalScore ? parseFloat(totalScore.replace(',', '.')) : NaN;
                     return fullName && fullName !== 'Testar aluno' && !isNaN(kcScoreValue) && kcScoreValue < 101;
                 })
                 .sort((a, b) => {
@@ -77,20 +79,20 @@ function processCSV(data) {
                 const fullName = row['Student'].split(', ').reverse().join(' ').trim();
                 const kcScore = row['Knowledge Checks Current Score']; //kc
                 const labScore = row['Labs Current Score']; //lab
+                const totalScore = row['Current Score']; //total
                 const email = row['SIS Login ID']; //usar o email do aluno
 
                 // Ajuste para "KC" e "Lab"
                 const pendingKCs = Object.keys(row)
-                .filter(key => 
-                    key.match(/^\d+-\s*\[?\w+\]?\s*-\s*KC/i) || // Ajuste para formatos variados como 4-CF-KC ou [CF]-KC
-                    key.match(/^\d+-\s*\w*\s*-\s*KC/i)   ||        // Ajuste para 208-CF-KC e outras variações
-                    key.match(/^\d+-\s*-\s*Lab\s?/)           // Ajuste para --Lab e variações
-                )
-                .filter(key => {
-                    const value = row[key];
-                    return value !== null && value !== undefined && parseFloat(value.replace(',', '.')) === 0;
-                })
-                .map(key => key.replace(/\s*\(\d+\)$/, '').trim());
+                    .filter(key => 
+                        key.match(/^\d+-\s*\[\w+\]\s*-\s*KC/) ||  // Ajuste para [JAWS] -KC e variações
+                        key.match(/^\d+-\s*-\s*Lab\s?/)           // Ajuste para --Lab e variações
+                    )
+                    .filter(key => {
+                        const value = row[key];
+                        return value !== null && value !== undefined && parseFloat(value.replace(',', '.')) === 0;
+                    })
+                    .map(key => key.replace(/\s*\(\d+\)$/, '').trim());
 
                 const pendingKCsStr = pendingKCs.length > 0 ? pendingKCs.join('\n') : "Nenhum";
 
@@ -101,8 +103,9 @@ function processCSV(data) {
                 const rowElement = document.createElement('tr');
                 rowElement.innerHTML = `
                     <td>${fullName}</td>
-                    <td>${kcScore}</td>
+                    <td>${totalScore}</td>
                     <td>${labScore}</td>
+                    <td>${kcScore}</td>
                     <td><a href="${outlookUrl}" target="_blank">Enviar E-mail</a></td>
                 `;
 
