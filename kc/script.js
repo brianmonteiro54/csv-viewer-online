@@ -115,15 +115,16 @@ function processCSV(data) {
 
                 // Ajuste para "KC" e "Lab"
                 const pendingKCs = Object.keys(row)
-                    .filter(key => 
-                        key.match(/^\d+-\s*\[\w+\]\s*-\s*KC/) ||  // Ajuste para [JAWS] -KC e variações
-                        key.match(/^\d+-\s*-\s*Lab\s?/)           // Ajuste para --Lab e variações
-                    )
-                    .filter(key => {
-                        const value = row[key];
-                        return value !== null && value !== undefined && parseFloat(value.replace(',', '.')) === 0;
-                    })
-                    .map(key => key.replace(/\s*\(\d+\)$/, '').trim());
+                .filter(key => 
+                    key.match(/^\d+-.*-.*KC/i) ||  // Detecta qualquer formato de KC com base em "KC"
+                    key.match(/^\d+-.*-.*Lab/i)    // Detecta qualquer formato de Lab com base em "Lab"
+                )
+                .filter(key => {
+                    const value = row[key];
+                    return value !== null && value !== undefined && parseFloat(value.replace(',', '.')) === 0;
+                })
+                .map(key => key.trim());
+            
 
                 const pendingKCsStr = pendingKCs.length > 0 ? pendingKCs.join('\n') : "Nenhum";
 
