@@ -123,7 +123,7 @@ function processCSV(data) {
                     const value = row[key];
                     return value !== null && value !== undefined && parseFloat(value.replace(',', '.')) === 0;
                 })
-                .map(key => key.trim());
+                .map(key => key.replace(/\s*\(\d+\)$/, '').trim()); 
             
 
                 const pendingKCsStr = pendingKCs.length > 0 ? pendingKCs.join('\n') : "Nenhum";
