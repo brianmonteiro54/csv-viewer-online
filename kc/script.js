@@ -19,63 +19,69 @@ document.getElementById('copy-performance-btn').addEventListener('click', functi
 
 document.getElementById('copy-to-clipboard-btn').addEventListener('click', function () {
     const orderText = document.getElementById('performance-order').value.trim();
-    const orderList = orderText.split('\n').map(name => name.trim()).filter(name => name.length > 0);
+    const orderList = orderText.split('\n').map(email => email.trim()).filter(email => email.length > 0);
 
     const tableData = {};
     document.querySelectorAll('#results-table tbody tr').forEach(row => {
         const cells = row.querySelectorAll('td');
-        const name = cells[0].innerText.trim();
-        const totalScore = cells[1].innerText.trim();
-        const labScore = cells[2].innerText.trim();
-        const kcScore = cells[3].innerText.trim();
+        const emailCell = cells[4].querySelector('a'); // Obtém a célula do e-mail
 
-        tableData[name] = {
-            total: totalScore,
-            lab: labScore,
-            kc: kcScore
-        };
-    });
+        if (emailCell) {
+            const email = decodeURIComponent(emailCell.href.split('to=')[1].split('&')[0]).trim();
+            const totalScore = cells[1].innerText.trim();
+            const labScore = cells[2].innerText.trim();
+            const kcScore = cells[3].innerText.trim();
 
-    let orderedPerformance = '';
-
-    orderList.forEach(name => {
-        if (tableData[name]) {
-            // Remove o '%' se existir e substitui vírgula por ponto para parseFloat
-            let total = tableData[name].total.replace('%', '').replace(',', '.');
-            let lab = tableData[name].lab.replace('%', '').replace(',', '.');
-            let kc = tableData[name].kc.replace('%', '').replace(',', '.');
-
-            // Converte para float
-            total = parseFloat(total);
-            lab = parseFloat(lab);
-            kc = parseFloat(kc);
-
-            // Verifica se são números válidos
-            if (!isNaN(total) && !isNaN(lab) && !isNaN(kc)) {
-                // Formata com uma casa decimal e substitui ponto por vírgula
-                const totalFormatted = total.toFixed(1).replace('.', ',') + '%';
-                const labFormatted = lab.toFixed(1).replace('.', ',') + '%';
-                const kcFormatted = kc.toFixed(1).replace('.', ',') + '%';
-
-                // Adiciona à string com tabulações
-                orderedPerformance += `${totalFormatted}\t${labFormatted}\t${kcFormatted}\n`;
+            if (email) {
+                tableData[email] = {
+                    total: totalScore,
+                    lab: labScore,
+                    kc: kcScore
+                };
             }
         }
     });
 
-    // Remove a última quebra de linha
+    let orderedPerformance = '';
+
+    orderList.forEach(email => {
+        if (tableData[email]) {
+            let total = tableData[email].total.replace('%', '').replace(',', '.');
+            let lab = tableData[email].lab.replace('%', '').replace(',', '.');
+            let kc = tableData[email].kc.replace('%', '').replace(',', '.');
+
+            total = parseFloat(total);
+            lab = parseFloat(lab);
+            kc = parseFloat(kc);
+
+            if (!isNaN(total) && !isNaN(lab) && !isNaN(kc)) {
+                const totalFormatted = total.toFixed(1).replace('.', ',') + '%';
+                const labFormatted = lab.toFixed(1).replace('.', ',') + '%';
+                const kcFormatted = kc.toFixed(1).replace('.', ',') + '%';
+
+                orderedPerformance += `${totalFormatted}\t${labFormatted}\t${kcFormatted}\n`;
+            }
+        } else {
+            orderedPerformance += `Email não encontrado: ${email}\n`; // Adiciona mensagem caso não encontre o e-mail
+        }
+    });
+
     orderedPerformance = orderedPerformance.trim();
 
-    // Copia para a área de transferência
-    const textArea = document.createElement('textarea');
-    textArea.value = orderedPerformance;
-    document.body.appendChild(textArea);
-    textArea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textArea);
-
-    alert('Desempenho copiado para a área de transferência!');
+    if (orderedPerformance) {
+        const textArea = document.createElement('textarea');
+        textArea.value = orderedPerformance;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('Desempenho copiado para a área de transferência!');
+    } else {
+        alert('Nenhum desempenho encontrado para os e-mails inseridos.');
+    }
 });
+
+
 
 function getGreeting() {
     const hours = new Date().getHours();
@@ -128,7 +134,8 @@ function processCSV(data) {
                 const pendingKCs = Object.keys(row)
                 .filter(key => 
                     key.match(/^\d+-.*-.*KC/i) ||  // Detecta qualquer formato de KC com base em "KC"
-                    key.match(/^\d+-.*-.*Lab/i)    // Detecta qualquer formato de Lab com base em "Lab"
+                    key.match(/^\d+-.*-.*Lab/i)||  // Detecta qualquer formato de Lab com base em "Lab"
+                    key.match(/^Atividade\s*[:|]\s*.+/) // Detecta qualquer formato de Atividade
                 )
                 .filter(key => {
                     const value = row[key];
@@ -140,7 +147,7 @@ function processCSV(data) {
                 const greeting = getGreeting();
                 const pendingKCsStr = pendingKCs.length > 0 ? pendingKCs.join('\n') : "Nenhum! Parabéns, você concluiu todos os KCs e laboratórios disponíveis até o momento! Essa conquista reflete sua dedicação e compromisso em aproveitar ao máximo essa oportunidade. Continue estudando e revisando os conteúdos, pois o próximo grande passo está à sua frente: a certificação Cloud Practitioner! Essa certificação é uma porta de entrada para oportunidades no mercado, e você já está na direção certa. Lembre-se: todo o esforço investido agora é um investimento no seu futuro.";
                 const message = `${greeting}, ${fullName}. 𝐒𝐞𝐮 𝐝𝐞𝐬𝐞𝐦𝐩𝐞𝐧𝐡𝐨 𝐧𝐨𝐬 𝐊𝐂𝐬 está em ${kcScore}%, e 𝐬𝐞𝐮 𝐝𝐞𝐬𝐞𝐦𝐩𝐞𝐧𝐡𝐨 𝐧𝐨𝐬 𝐋𝐚𝐛𝐬 está em ${labScore}%. Você ainda tem alguns KCs/Labs pendentes:\n\n${pendingKCsStr}\n\nPara aprovação no curso AWS re/Start, os seguintes requisitos devem ser atendidos:\n\n1. 𝗖𝗼𝗻𝗰𝗹𝘂𝘀𝗮̃𝗼 𝗱𝗲 𝟭𝟬𝟬% 𝗱𝗼𝘀 𝗟𝗮𝗯𝗼𝗿𝗮𝘁𝗼́𝗿𝗶𝗼𝘀: Todos os laboratórios do curso devem ser completados com pontuação total.\n\n2. 𝑷𝒐𝒏𝒕𝒖𝒂𝒄̧𝒂̃𝒐 𝒆𝒎 𝑲𝑪'𝒔: Obter uma pontuação mínima de 70%.\n\n3. 𝗣𝗿𝗲𝘀𝗲𝗻𝗰̧𝗮 𝗻𝗮𝘀 𝗔𝘂𝗅𝗮𝘀: Manter uma presença mínima de 80% em todas as aulas.`;
-                const emailSubject = `Desempenho Acadêmico - ${fullName} - Escola da Nuvem`;
+                const emailSubject = `Desempenho e Faltas - Aviso importante!! - ${fullName} - Escola da Nuvem`;
                 const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(message)}`;
 
                 const rowElement = document.createElement('tr');
