@@ -99,6 +99,31 @@ function getGreeting() {
     }
 }
 
+function copyEmailContent(message, email, fullName) {
+    // Decodifica a mensagem
+    const decodedMessage = decodeURIComponent(message);
+
+    // Copia o conteúdo para a área de transferência
+    navigator.clipboard.writeText(decodedMessage).then(() => {
+        alert('Conteúdo do e-mail copiado para a área de transferência!');
+    }).catch(error => {
+        console.error('Erro ao copiar para a área de transferência:', error);
+    });
+
+    // Codifica o assunto corretamente
+    const subject = encodeURIComponent(`Desempenho e Faltas - Aviso importante!! - ${fullName} - Escola da Nuvem`);
+
+    // Gera a URL correta
+    const manualEmailUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}&subject=${subject}`;
+
+    // Abre a nova guia com o e-mail preenchido corretamente
+    window.open(manualEmailUrl, '_blank');
+}
+
+console.log(message);
+copyEmailContent(message, email);
+
+
 
 function processCSV(data) {
     fetch('students.json')
@@ -155,7 +180,6 @@ function processCSV(data) {
                 const message = `${greeting}, ${fullName}. Seu desempenho nos KCs está em ${kcScore}%, e seu desempenho nos Labs está em ${labScore}%. Você ainda tem alguns KCs/Labs pendentes:\n\n${pendingKCsStr}\n\nPara aprovação no curso AWS re/Start, os seguintes requisitos devem ser atendidos:\n\n1. Conclusão de 100% dos Laboratórios: Todos os laboratórios do curso devem ser completados com pontuação total.\n\n2. Pontuação em KCs: Obter uma pontuação mínima de 70%.\n\n3. Presença nas Aulas: Manter uma presença mínima de 80% em todas as aulas.`;
                 const emailSubject = `Desempenho e Faltas - Aviso importante!! - ${fullName} - Escola da Nuvem`;
                 const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}?cc=${recipientsCC}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(message)}`;
-
 
                 const rowElement = document.createElement('tr');
                 rowElement.innerHTML = `
@@ -230,5 +254,3 @@ function showNotification() {
     notificacao.classList.remove('show');
   }, 5000); 
 }
-
-
