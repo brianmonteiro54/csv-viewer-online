@@ -25,3 +25,75 @@ th, td {
 th {
     background-color: #f2f2f2;
 }
+
+.botao-copiado {
+  background-color: #4CAF50; 
+  color: white; 
+  border: none; 
+  text-align: center; 
+  text-decoration: none; 
+  display: inline-block; 
+  font-size: 16px; 
+  cursor: pointer; 
+  border-radius: 5px; 
+  transition: background-color 0.3s ease, transform 0.2s ease; 
+}
+
+.botao-copiado.copiado {
+  background-color: #d9ff00; 
+}
+
+.botao-copiado:hover {
+  background-color: #0056b3; 
+  transform: scale(1.05); 
+}
+
+.botao-copiado:active {
+  background-color: #000000;
+  transform: scale(0.98); 
+}
+
+.notificacao {
+  position: fixed;
+  top: 20px; 
+  left: 50%; 
+  transform: translateX(-50%); 
+  background-color: #4CAF50; 
+  color: white; 
+  padding: 10px 20px; 
+  border-radius: 5px; 
+  font-size: 16px;
+  opacity: 0; 
+  z-index: 9999; 
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+}
+
+.notificacao.show {
+  opacity: 1; 
+}
+
+.barra-progresso {
+  width: 0%; 
+  height: 4px; 
+  background-color: #ffffff; 
+  border-radius: 2px; 
+  position: absolute;
+  bottom: 0; 
+  left: 0;
+  animation: progresso 10s linear forwards; 
+}
+
+@keyframes progresso {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.botao-enviar-email:hover {
+  color: #ff0000; 
+}
