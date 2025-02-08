@@ -18,73 +18,66 @@ document.getElementById('file-input').addEventListener('change', function (e) {
     });
 });
 
-document.getElementById('copy-performance-btn').addEventListener('click', function () {
-    document.getElementById('performance-order-container').style.display = 'block';
-});
+let csvData = []; // Variável para armazenar os dados do CSV
 
-document.getElementById('copy-to-clipboard-btn').addEventListener('click', function () {
-    const orderText = document.getElementById('performance-order').value.trim();
-    const orderList = orderText.split('\n').map(email => email.trim()).filter(email => email.length > 0);
-
-    const tableData = {};
-    document.querySelectorAll('#results-table tbody tr').forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const emailCell = cells[4].querySelector('a'); // Obtém a célula do e-mail
-
-        if (emailCell) {
-            const email = decodeURIComponent(emailCell.href.split('to=')[1].split('&')[0]).trim();
-            const totalScore = cells[1].innerText.trim();
-            const labScore = cells[2].innerText.trim();
-            const kcScore = cells[3].innerText.trim();
-
-            if (email) {
-                tableData[email] = {
-                    total: totalScore,
-                    lab: labScore,
-                    kc: kcScore
-                };
-            }
-        }
-    });
-
-    let orderedPerformance = '';
-
-    orderList.forEach(email => {
-        if (tableData[email]) {
-            let total = tableData[email].total.replace('%', '').replace(',', '.');
-            let lab = tableData[email].lab.replace('%', '').replace(',', '.');
-            let kc = tableData[email].kc.replace('%', '').replace(',', '.');
-
-            total = parseFloat(total);
-            lab = parseFloat(lab);
-            kc = parseFloat(kc);
-
-            if (!isNaN(total) && !isNaN(lab) && !isNaN(kc)) {
-                const totalFormatted = total.toFixed(1).replace('.', ',') + '%';
-                const labFormatted = lab.toFixed(1).replace('.', ',') + '%';
-                const kcFormatted = kc.toFixed(1).replace('.', ',') + '%';
-
-                orderedPerformance += `${totalFormatted}\t${labFormatted}\t${kcFormatted}\n`;
-            }
-        } else {
-            orderedPerformance += `Email não encontrado: ${email}\n`; // Adiciona mensagem caso não encontre o e-mail
-        }
-    });
-
-    orderedPerformance = orderedPerformance.trim();
-
-    if (orderedPerformance) {
-        const textArea = document.createElement('textarea');
-        textArea.value = orderedPerformance;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        alert('Desempenho copiado para a área de transferência!');
-    } else {
-        alert('Nenhum desempenho encontrado para os e-mails inseridos.');
+document.getElementById('file-input').addEventListener('change', function (e) {
+    const file = e.target.files[0];
+    if (!file) {
+        alert('Por favor, carregue um arquivo antes de enviar.');
+        return;
     }
+
+    Papa.parse(file, {
+        header: true,
+        complete: function (results) {
+            csvData = results.data; // Armazenar os dados do CSV
+            processCSV(csvData); // Chama a função para processar os dados e preencher a tabela
+        }
+    });
 });
+
+document.getElementById('copy-performance-btn').addEventListener('click', function () {
+    // Esconder a tabela antes de copiar o desempenho
+    document.getElementById('results').style.display = 'none'; // Ocultar a tabela de resultados
+    document.getElementById('performance-order-container').style.display = 'block'; // Exibir a área para os e-mails
+
+    // Carregar dinamicamente o script desempenho.js
+    const script = document.createElement('script');
+    script.src = 'desempenho.js';
+    document.body.appendChild(script);
+});
+
+function processCSV(data) {
+    const resultsTableBody = document.querySelector('#results-table tbody');
+    const resultsDiv = document.getElementById('results');
+    resultsTableBody.innerHTML = ''; // Limpar a tabela existente
+
+    data.forEach(row => {
+        const fullName = row['Student'].split(', ').reverse().join(' ').trim();
+        const kcScore = row['Knowledge Checks Current Score']; // KC
+        const labScore = row['Labs Current Score']; // LAB
+        const totalScore = row['Current Score']; // Total
+        const email = row['SIS Login ID']; // Email do aluno
+
+        const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}&subject=${encodeURIComponent('Desempenho e Faltas - Aviso importante!! - ' + fullName)}&body=${encodeURIComponent('Seu desempenho...')}&cc=denis.ferro@escoladanuvem.org`;
+
+        const rowElement = document.createElement('tr');
+        rowElement.innerHTML = `
+            <td>${fullName}</td>
+            <td>${totalScore}</td>
+            <td>${labScore}</td>
+            <td>${kcScore}</td>
+            <td><a href="${outlookUrl}" target="_blank">Enviar E-mail</a></td>
+            <td><button>Copiar texto</button></td>
+        `;
+        resultsTableBody.appendChild(rowElement);
+    });
+
+    // Exibir os resultados, se houver dados
+    if (data.length > 0) {
+        resultsDiv.style.display = 'block';
+    }
+}
 
 
 
