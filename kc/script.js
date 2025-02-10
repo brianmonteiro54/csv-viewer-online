@@ -56,7 +56,7 @@ function processCSV(data) {
         const fullName = row['Student'].split(', ').reverse().join(' ').trim();
         const kcScore = row['Knowledge Checks Current Score']; // KC
         const labScore = row['Labs Current Score']; // LAB
-        const totalScore = row['Current Score']; // Total
+        const totalScore = row['desempenho_das_entregas']; // Total
         const email = row['SIS Login ID']; // Email do aluno
 
         const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}&subject=${encodeURIComponent('Desempenho e Faltas - Aviso importante!! - ' + fullName)}&body=${encodeURIComponent('Seu desempenho...')}&cc=denis.ferro@escoladanuvem.org`;
@@ -108,7 +108,7 @@ function processCSV(data) {
                     const kcScoreValue = kcScore ? parseFloat(kcScore.replace(',', '.')) : NaN;
                     const labScore = row['Labs Current Score'];
                     const labScoreValue = labScore ? parseFloat(labScore.replace(',', '.')) : NaN;
-                    const totalScore = row['Current Score'];
+                    const totalScore = row['desempenho_das_entregas'];
                     const totalScoreValue = totalScore ? parseFloat(totalScore.replace(',', '.')) : NaN;
                     return fullName && fullName !== 'Testar aluno' && !isNaN(kcScoreValue) && kcScoreValue < 101;
                 })
@@ -126,7 +126,7 @@ function processCSV(data) {
                 const fullName = row['Student'].split(', ').reverse().join(' ').trim();
                 const kcScore = row['Knowledge Checks Current Score']; // KC
                 const labScore = row['Labs Current Score']; // LAB
-                const totalScore = row['Current Score']; // Total
+                const totalScore = row['desempenho_das_entregas']; // Total
                 const email = row['SIS Login ID']; // Email do aluno
 
                 // Ajuste para "KC" e "Lab"

@@ -9,7 +9,7 @@ document.getElementById('copy-to-clipboard-btn').addEventListener('click', funct
     // Preencher a tabelaData com os dados do CSV
     csvData.forEach(row => {
         const email = row['SIS Login ID']; // E-mail do aluno
-        const totalScore = row['Current Score']; // Total
+        const totalScore = row['desempenho_das_entregas']; // Total
         const labScore = row['Labs Current Score']; // LAB
         const kcScore = row['Knowledge Checks Current Score']; // KC
 
