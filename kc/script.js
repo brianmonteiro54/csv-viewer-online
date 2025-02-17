@@ -1,5 +1,5 @@
-    // E-mail fixo para CC(copia para o Denis)
-    const fixedRecipient = "denis.ferro@escoladanuvem.org";
+    // E-mail fixo para CC(copia para o Equipe Operacional EDN)
+    const fixedRecipient = "comunicacao.alunos@escoladanuvem.org";
     
     // Codificação do campo CC
     const recipientsCC = encodeURIComponent(fixedRecipient);
@@ -59,7 +59,7 @@ function processCSV(data) {
         const totalScore = row['desempenho_das_entregas']; // Total
         const email = row['SIS Login ID']; // Email do aluno
 
-        const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}&subject=${encodeURIComponent('Desempenho e Faltas - Aviso importante!! - ' + fullName)}&body=${encodeURIComponent('Seu desempenho...')}&cc=denis.ferro@escoladanuvem.org`;
+        const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}&subject=${encodeURIComponent('Desempenho e Faltas - Aviso importante!! - ' + fullName)}&body=${encodeURIComponent('Seu desempenho...')}&cc=${recipientsCC}`;
 
         const rowElement = document.createElement('tr');
         rowElement.innerHTML = `
