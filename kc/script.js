@@ -132,7 +132,7 @@ function processCSV(data) {
                 // Ajuste para "KC" e "Lab"
                 const pendingKCs = Object.keys(row)
                 .filter(key => 
-                    key.match(/^\d+-.*-.*KC/i) ||  // Detecta qualquer formato de KC com base em "KC"
+                    key.match(/^\s*\d+\s*[-–]\s*(.*\s*)?KC.*$/) ||  // Detecta qualquer formato de KC com base em "KC"
                     key.match(/^\d+-.*-.*Lab/i)||  // Detecta qualquer formato de Lab com base em "Lab"
                     key.match(/^Atividade\s*[:|]\s*.+/) // Detecta qualquer formato de Atividade
                 )
