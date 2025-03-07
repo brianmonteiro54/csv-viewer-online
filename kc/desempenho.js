@@ -2,13 +2,13 @@ document.getElementById('copy-to-clipboard-btn').addEventListener('click', funct
     console.log('Botão "Copiar para Área de Transferência" clicado');
 
     const orderText = document.getElementById('performance-order').value.trim();
-    const orderList = orderText.split('\n').map(email => email.trim()).filter(email => email.length > 0);
+    const orderList = orderText.split('\n').map(email => email.trim().toLowerCase()).filter(email => email.length > 0);
 
     const tableData = {};
 
     // Preencher a tabelaData com os dados do CSV
     csvData.forEach(row => {
-        const email = row['SIS Login ID']; // E-mail do aluno
+        const email = row['SIS Login ID'] ? row['SIS Login ID'].trim().toLowerCase() : ''; // Converter para minúsculas
         const totalScore = row['desempenho_das_entregas']; // Total
         const labScore = row['Labs Current Score']; // LAB
         const kcScore = row['Knowledge Checks Current Score']; // KC
@@ -25,10 +25,13 @@ document.getElementById('copy-to-clipboard-btn').addEventListener('click', funct
     let orderedPerformance = '';
 
     orderList.forEach(email => {
-        if (tableData[email]) {
-            let total = tableData[email].total.replace('%', '').replace(',', '.');
-            let lab = tableData[email].lab.replace('%', '').replace(',', '.');
-            let kc = tableData[email].kc.replace('%', '').replace(',', '.');
+        // Encontrar o e-mail no objeto, comparando em minúsculas
+        const matchingKey = Object.keys(tableData).find(key => key.toLowerCase() === email);
+
+        if (matchingKey) {
+            let total = tableData[matchingKey].total.replace('%', '').replace(',', '.');
+            let lab = tableData[matchingKey].lab.replace('%', '').replace(',', '.');
+            let kc = tableData[matchingKey].kc.replace('%', '').replace(',', '.');
 
             total = parseFloat(total);
             lab = parseFloat(lab);
@@ -42,7 +45,7 @@ document.getElementById('copy-to-clipboard-btn').addEventListener('click', funct
                 orderedPerformance += `${totalFormatted}\t${labFormatted}\t${kcFormatted}\n`;
             }
         } else {
-            orderedPerformance += `Email não encontrado: ${email}\n`; // Adiciona mensagem caso não encontre o e-mail
+            orderedPerformance += `Email não encontrado: ${email}\n`; // Caso não encontre
         }
     });
 
@@ -63,6 +66,7 @@ document.getElementById('copy-to-clipboard-btn').addEventListener('click', funct
     // Depois de copiar, recarregar a tabela de resultados
     loadResults();
 });
+
 
 // Função que carrega os resultados novamente
 function loadResults() {
