@@ -1,8 +1,3 @@
-    // E-mail fixo para CC(copia para o Equipe Operacional EDN)
-    const fixedRecipient = "comunicacao.alunos@escoladanuvem.org";
-    
-    // Codificação do campo CC
-    const recipientsCC = encodeURIComponent(fixedRecipient);
 document.getElementById('file-input').addEventListener('change', function (e) {
     const file = e.target.files[0];
     if (!file) {
@@ -59,7 +54,7 @@ function processCSV(data) {
         const totalScore = row['desempenho_das_entregas']; // Total
         const email = row['SIS Login ID']; // Email do aluno
 
-        const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}&subject=${encodeURIComponent('Desempenho e Faltas - Aviso importante!! - ' + fullName)}&body=${encodeURIComponent('Seu desempenho...')}&cc=${recipientsCC}`;
+        const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}&subject=${encodeURIComponent('Desempenho e Faltas - Aviso importante!! - ' + fullName)}&body=${encodeURIComponent('Seu desempenho...')}`;
 
         const rowElement = document.createElement('tr');
         rowElement.innerHTML = `
@@ -124,10 +119,18 @@ function processCSV(data) {
 
             filteredData.forEach(row => {
                 const fullName = row['Student'].split(', ').reverse().join(' ').trim();
+                const firstName = fullName.split(' ')[0]; // Primeiro nome para tom mais pessoal
                 const kcScore = row['Knowledge Checks Current Score']; // KC
                 const labScore = row['Labs Current Score']; // LAB
                 const totalScore = row['desempenho_das_entregas']; // Total
                 const email = row['SIS Login ID']; // Email do aluno
+
+                // Verifica se o aluno está graduado (Graduated Final Score = 100,00)
+                const graduatedScoreRaw = row['Graduated Final Score'];
+                const graduatedScoreValue = graduatedScoreRaw
+                    ? parseFloat(graduatedScoreRaw.toString().replace(',', '.'))
+                    : NaN;
+                const isGraduated = !isNaN(graduatedScoreValue) && graduatedScoreValue === 100;
 
                 // Ajuste para "KC" e "Lab"
                 const pendingKCs = Object.keys(row)
@@ -144,10 +147,21 @@ function processCSV(data) {
             
                 // Obtém a saudação correta
                 const greeting = getGreeting();
-                const pendingKCsStr = pendingKCs.length > 0 ? pendingKCs.join('\n') : "Nenhum! Parabéns, você concluiu todos os KCs e laboratórios disponíveis até o momento! Essa conquista reflete sua dedicação e compromisso em aproveitar ao máximo essa oportunidade. Continue estudando e revisando os conteúdos, pois o próximo grande passo está à sua frente: a certificação Cloud Practitioner! Essa certificação é uma porta de entrada para oportunidades no mercado, e você já está na direção certa. Lembre-se: todo o esforço investido agora é um investimento no seu futuro.";
-                const message = `${greeting}, ${fullName}. Seu desempenho nos KCs está em ${kcScore}%, e seu desempenho nos Labs está em ${labScore}%. Você ainda tem alguns KCs/Labs pendentes:\n\n${pendingKCsStr}\n\nPara aprovação no curso AWS re/Start, os seguintes requisitos devem ser atendidos:\n\n1. Conclusão de 100% dos Laboratórios: Todos os laboratórios do curso devem ser completados com pontuação total.\n\n2. Pontuação em KCs: Obter uma pontuação mínima de 70%.\n\n3. Presença nas Aulas: Manter uma presença mínima de 80% em todas as aulas.`;
+
+                let message;
+                if (isGraduated) {
+                    // Mensagem especial para alunos graduados (Graduated Final Score = 100,00)
+                    message = `${greeting}, ${fullName}. Parabéns! Você concluiu todos os KCs e laboratórios da plataforma Canvas e oficializou sua graduação no curso AWS re/Start! Seu status no sistema foi atualizado para Graduated 🎓.\n\nQue jornada, ${firstName}! Foram vários meses de dedicação, laboratórios desafiadores e muita persistência e você chegou até aqui.`;
+                } else if (pendingKCs.length > 0) {
+                    // Aluno ainda tem KCs/Labs pendentes
+                    const pendingKCsStr = pendingKCs.join('\n');
+                    message = `${greeting}, ${fullName}. Seu desempenho nos KCs está em ${kcScore}%, e seu desempenho nos Labs está em ${labScore}%. Você ainda tem alguns KCs/Labs pendentes:\n\n${pendingKCsStr}\n\nPara aprovação no curso AWS re/Start, os seguintes requisitos devem ser atendidos:\n\n1. Conclusão de 100% dos Laboratórios: Todos os laboratórios do curso devem ser completados com pontuação total.\n\n2. Pontuação em KCs: Obter uma pontuação mínima de 70%.\n\n3. Presença nas Aulas: Manter uma presença mínima de 80% em todas as aulas.`;
+                } else {
+                    // Aluno concluiu KCs e Labs, mas ainda não está graduado (provavelmente falta presença)
+                    message = `${greeting}, ${fullName}. Seu desempenho nos KCs está em ${kcScore}%, e seu desempenho nos Labs está em ${labScore}%. Parabéns, você concluiu todos os KCs e laboratórios disponíveis até o momento! Essa conquista reflete sua dedicação e compromisso em aproveitar ao máximo essa oportunidade. Continue estudando e revisando os conteúdos, pois o próximo grande passo está à sua frente: a certificação Cloud Practitioner! Essa certificação é uma porta de entrada para oportunidades no mercado, e você já está na direção certa. Lembre-se: todo o esforço investido agora é um investimento no seu futuro.\n\nPara aprovação no curso AWS re/Start, os seguintes requisitos devem ser atendidos:\n\n1. Conclusão de 100% dos Laboratórios: Todos os laboratórios do curso devem ser completados com pontuação total.\n\n2. Pontuação em KCs: Obter uma pontuação mínima de 70%.\n\n3. Presença nas Aulas: Manter uma presença mínima de 80% em todas as aulas.`;
+                }
                 const emailSubject = `Desempenho e Faltas - Aviso importante!! - ${fullName} - Escola da Nuvem`;
-                const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}?cc=${recipientsCC}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(message)}`;
+                const outlookUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}&subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(message)}`;
 
 
                 const rowElement = document.createElement('tr');
@@ -192,7 +206,7 @@ function copyEmailContent(message, email, fullName, button) {
     const subject = encodeURIComponent(`Desempenho e Faltas - Aviso importante!! - ${fullName} - Escola da Nuvem`);
 
     // Gera a URL com CC e BCC
-    const manualEmailUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}?cc=${recipientsCC}&subject=${subject}`;
+    const manualEmailUrl = `https://outlook.office.com/mail/deeplink/compose?to=${encodeURIComponent(email)}&subject=${subject}`;
 
     // Abre a nova guia com o e-mail preenchido corretamente
     window.open(manualEmailUrl, '_blank');
@@ -223,4 +237,3 @@ function showNotification() {
     notificacao.classList.remove('show');
   }, 5000); 
 }
-
