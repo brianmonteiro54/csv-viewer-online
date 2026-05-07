@@ -64,6 +64,17 @@ Esses casos aparecem como avisos no preview e não interferem nos cálculos da t
 
 **Mensagem para graduados** 🎓 — texto celebrativo automático parabenizando pela conclusão (ao invés do template padrão de cobrança).
 
+### 📅 Datas de encerramento por turma (opcional)
+
+Configura uma data/hora limite para cada turma (campo `Section` do CSV — ex: `BRSAO244`). Quando configurada, alunos **não-graduados** dessa turma recebem um aviso adicional na mensagem:
+
+> *"ENCERRAMENTO NO CANVAS: DIA 20/05/2026 Às 23:59, APÓS ESTE PERÍODO, NÃO SERÁ POSSÍVEL REALIZAR ENTREGAS E O ALUNO SERÁ CONSIDERADO REPROVADO."*
+
+- **Por turma**: cada `Section` pode ter sua própria data
+- **Persistente**: salvo no `localStorage`, basta carregar o CSV da turma para o aviso aparecer automaticamente nas mensagens
+- **Não afeta graduados**: alunos com `Graduated Final Points = 1` continuam recebendo a mensagem celebrativa, sem aviso de prazo
+- Gerenciável em ⚙️ Configurações → "📅 Datas de encerramento por turma"
+
 ### 📋 Cópia de desempenho em massa
 
 Cole uma lista de e-mails → recebe a tabela de desempenho **na mesma ordem** (Total, Lab, KC) em formato pronto para colar em planilha (separado por tab).
@@ -134,6 +145,7 @@ Arquivo deve ser exportado diretamente do **Canvas LMS**, sem alterações no Ex
 | `Student` | Nome do aluno (formato `Sobrenome, Nome`) |
 | `ID` | ID Canvas (usado como fallback se e-mail estiver vazio) |
 | `SIS Login ID` | E-mail do aluno |
+| `Section` | Código da turma (usado pela feature opcional de data de encerramento) |
 | `Graduated Final Points` | `1` indica aluno graduado |
 | `NNN...KC...` | Knowledge Checks (colunas começando com número e contendo `KC`) |
 | `NNN...Lab...` | Laboratórios (colunas começando com número e contendo `Lab`) |
@@ -175,13 +187,13 @@ A linha `Points Possible` é ignorada automaticamente.
   <tr>
     <td align="center">
       <a href="https://www.linkedin.com/in/anderson-garcia-albuquerque/" target="_blank">
-        <img src="kc/assets/anderson-albuquerque.jpg" width="90" style="border-radius:50%"><br>
+        <img src="assets/anderson-albuquerque.jpg" width="90" style="border-radius:50%"><br>
         <strong>Anderson Albuquerque</strong>
       </a>
     </td>
     <td align="center">
       <a href="https://www.linkedin.com/in/brianrichard1/" target="_blank">
-        <img src="kc/assets/brian-richard.jpg" width="90" style="border-radius:50%"><br>
+        <img src="assets/brian-richard.jpg" width="90" style="border-radius:50%"><br>
         <strong>Brian Richard</strong>
       </a>
     </td>
