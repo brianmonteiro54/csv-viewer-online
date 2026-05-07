@@ -175,13 +175,13 @@ A linha `Points Possible` é ignorada automaticamente.
   <tr>
     <td align="center">
       <a href="https://www.linkedin.com/in/anderson-garcia-albuquerque/" target="_blank">
-        <img src="assets/anderson-albuquerque.jpg" width="90" style="border-radius:50%"><br>
+        <img src="kc/assets/anderson-albuquerque.jpg" width="90" style="border-radius:50%"><br>
         <strong>Anderson Albuquerque</strong>
       </a>
     </td>
     <td align="center">
       <a href="https://www.linkedin.com/in/brianrichard1/" target="_blank">
-        <img src="assets/brian-richard.jpg" width="90" style="border-radius:50%"><br>
+        <img src="kc/assets/brian-richard.jpg" width="90" style="border-radius:50%"><br>
         <strong>Brian Richard</strong>
       </a>
     </td>
