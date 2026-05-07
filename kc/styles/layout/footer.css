@@ -1,0 +1,44 @@
+/* ===================== RODAPÉ ===================== */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 30px;
+  padding: 20px 24px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.footer-devs {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.dev-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.2s;
+}
+
+.dev-card:hover { transform: translateY(-2px); }
+
+.dev-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+}
+
+.dev-name { font-size: 11.5px; color: var(--text-muted); }
+
+.dev-link { text-decoration: none; }
+

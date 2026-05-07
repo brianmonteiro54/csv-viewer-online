@@ -1,0 +1,33 @@
+/* ===================== RESPONSIVE ADJUSTMENTS ===================== */
+@media (max-width: 640px) {
+  body { padding: 12px; }
+
+  .upload-card { padding: 16px; }
+
+  .header-row { flex-direction: column; align-items: stretch; }
+
+  .actions { flex-direction: column; }
+  .actions button { width: 100%; justify-content: center; }
+
+  /* Tabela: ajusta para mobile */
+  table { table-layout: auto; }
+  th, td { padding: 8px 6px; font-size: 12px; }
+
+  /* Esconde colunas menos importantes em telas pequenas */
+  th:nth-child(1), td:nth-child(1),
+  th:nth-child(3), td:nth-child(3),
+  th:nth-child(4), td:nth-child(4) {
+    display: none;
+  }
+
+  th:nth-child(5), td:nth-child(5),
+  th:nth-child(6), td:nth-child(6) {
+    width: auto;
+  }
+
+  .modal { padding: 8px; }
+  .modal-content { max-height: 95vh; }
+  .modal-header, .modal-body { padding: 14px; }
+
+  .footer { flex-direction: column; text-align: center; padding: 16px; }
+}

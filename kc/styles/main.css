@@ -1,0 +1,33 @@
+/* ============================================================
+   Student Performance Analyzer — Estilos modulares
+   Entry point: importa todos os módulos na ordem de cascata.
+   Ordem: base → layout → components → responsive
+   ============================================================ */
+
+/* Base — variáveis e reset (precisam vir primeiro) */
+@import url("./base/variables.css");
+@import url("./base/reset.css");
+
+/* Layout — estrutura geral da página */
+@import url("./layout/header.css");
+@import url("./layout/footer.css");
+
+/* Components — blocos reutilizáveis (ordem alfabética) */
+@import url("./components/ajuda.css");
+@import url("./components/area-copia.css");
+@import url("./components/buttons.css");
+@import url("./components/charts.css");
+@import url("./components/config.css");
+@import url("./components/empty-state.css");
+@import url("./components/encerramentos.css");
+@import url("./components/envio.css");
+@import url("./components/filters.css");
+@import url("./components/ignorados.css");
+@import url("./components/inputs.css");
+@import url("./components/modal.css");
+@import url("./components/table.css");
+@import url("./components/toast.css");
+@import url("./components/upload.css");
+
+/* Responsive — media queries por último para sobrescrever */
+@import url("./components/responsive.css");

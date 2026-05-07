@@ -1,0 +1,229 @@
+/* ===================== UPLOAD CARD ===================== */
+.upload-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.upload-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.upload-label {
+  font-weight: 700;
+  font-size: 16px;
+  margin: 0;
+}
+
+.upload-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ===================== DROPZONE ===================== */
+.dropzone {
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius);
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg-subtle);
+}
+
+.dropzone:hover,
+.dropzone:focus,
+.dropzone.dragover {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  outline: none;
+}
+
+body.dark .dropzone:hover,
+body.dark .dropzone:focus,
+body.dark .dropzone.dragover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.dropzone-icon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.dropzone-text {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+}
+
+.dropzone-link {
+  color: var(--primary);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.dropzone-hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.dropzone-file {
+  margin: 12px 0 0 0;
+  font-size: 13px;
+  color: var(--success);
+  font-weight: 600;
+}
+
+/* ===================== CSV PREVIEW ===================== */
+.csv-preview {
+  margin-top: 14px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.csv-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.csv-preview-header h3 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.csv-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.csv-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.csv-stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.csv-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.csv-stat.warning .csv-stat-value { color: var(--warning); }
+.csv-stat.danger  .csv-stat-value { color: var(--danger);  }
+.csv-stat.success .csv-stat-value { color: var(--success); }
+
+.csv-warnings {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  color: #92400e;
+  font-size: 13px;
+}
+
+body.dark .csv-warnings {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #fde68a;
+}
+
+.csv-warnings ul { margin: 6px 0 0 0; padding-left: 20px; }
+.csv-warnings li { margin: 2px 0; }
+
+.csv-errors {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  color: #991b1b;
+  font-size: 13px;
+}
+
+body.dark .csv-errors {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.3);
+  color: #fca5a5;
+}
+
+.csv-errors ul { margin: 6px 0 0 0; padding-left: 20px; }
+.csv-errors li { margin: 2px 0; }
+
+.csv-preview-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+  padding: 4px 8px;
+}
+
+.btn-link:hover { color: var(--text); }
+
+/* ===================== UPLOAD ACTIONS ===================== */
+.upload-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+#progresso-container {
+  background: var(--border);
+  border-radius: 99px;
+  height: 8px;
+  margin-top: 14px;
+  overflow: hidden;
+  display: none;
+}
+
+#progresso {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--primary), #60a5fa);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+#status {
+  font-weight: 600;
+  margin: 8px 0 0 0;
+  font-size: 13px;
+  min-height: 18px;
+  color: var(--text-muted);
+}
+

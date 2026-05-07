@@ -1,0 +1,182 @@
+/* ===================== TABELA ===================== */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  table-layout: fixed;
+  transition: background 0.3s;
+}
+
+th {
+  background-color: #1f2937;
+  color: white;
+  text-align: left;
+  user-select: none;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+body.dark th { background-color: #0f172a; }
+
+th.sortable { cursor: pointer; transition: background 0.2s; }
+th.sortable:hover { background-color: #374151; }
+
+.sort-arrow { opacity: 0.5; font-size: 10px; }
+th.sort-active .sort-arrow { opacity: 1; }
+
+th:nth-child(1), td:nth-child(1) { width: 4%;  }
+th:nth-child(2), td:nth-child(2) { width: 24%; }
+th:nth-child(3), td:nth-child(3) { width: 18%; }
+th:nth-child(4), td:nth-child(4) { width: 9%;  }
+th:nth-child(5), td:nth-child(5) { width: 9%;  }
+th:nth-child(6), td:nth-child(6) { width: 9%;  }
+th:nth-child(7), td:nth-child(7) { width: 11%; }
+th:nth-child(8), td:nth-child(8) { width: 16%; }
+
+th, td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+td:nth-child(2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+tbody tr {
+  transition: background 0.15s;
+  cursor: pointer;
+}
+
+tbody tr:hover { background-color: var(--bg-hover) !important; }
+
+/* ===================== STATUS ROWS (LIGHT) ===================== */
+tbody tr.green     { background-color: #f0fdf4; border-left: 4px solid var(--success); }
+tbody tr.red       { background-color: #fef2f2; border-left: 4px solid var(--danger);  }
+tbody tr.yellow    { background-color: #fffbeb; border-left: 4px solid var(--warning); }
+tbody tr.graduated { background-color: #eff6ff; border-left: 4px solid var(--graduated); }
+
+tbody tr.green:hover     { background-color: #dcfce7 !important; }
+tbody tr.red:hover       { background-color: #fee2e2 !important; }
+tbody tr.yellow:hover    { background-color: #fef3c7 !important; }
+tbody tr.graduated:hover { background-color: #dbeafe !important; }
+
+/* ===================== STATUS ROWS (DARK) ===================== */
+body.dark tbody tr.green     { background-color: rgba(34, 197, 94, 0.08); border-left: 4px solid #22c55e; }
+body.dark tbody tr.red       { background-color: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; }
+body.dark tbody tr.yellow    { background-color: rgba(245, 158, 11, 0.08); border-left: 4px solid #f59e0b; }
+body.dark tbody tr.graduated { background-color: rgba(59, 130, 246, 0.08); border-left: 4px solid #3b82f6; }
+
+body.dark tbody tr.green:hover     { background-color: rgba(34, 197, 94, 0.15) !important; }
+body.dark tbody tr.red:hover       { background-color: rgba(239, 68, 68, 0.15) !important; }
+body.dark tbody tr.yellow:hover    { background-color: rgba(245, 158, 11, 0.15) !important; }
+body.dark tbody tr.graduated:hover { background-color: rgba(59, 130, 246, 0.15) !important; }
+
+/* ===================== BADGES ===================== */
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge.green     { background: var(--success);  color: #fff; }
+.badge.red       { background: var(--danger);   color: #fff; }
+.badge.yellow    { background: var(--warning);  color: #1f2937; }
+.badge.graduated { background: var(--graduated); color: #fff; }
+
+/* ===================== BARRA DE PROGRESSO NA TABELA ===================== */
+.progress-bar-container {
+  background: var(--border);
+  border-radius: 99px;
+  height: 18px;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+
+.progress-bar-container span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #1f2937;
+  text-shadow: 0 0 2px rgba(255,255,255,0.6);
+}
+
+body.dark .progress-bar-container span { color: #f8fafc; text-shadow: 0 0 2px rgba(0,0,0,0.6); }
+
+/* ===================== LINHA EXPANDIDA ===================== */
+.detalhe-row td {
+  background-color: var(--bg-subtle) !important;
+  font-size: 13px;
+  padding: 16px 24px;
+  border-left: 4px solid var(--primary);
+  animation: fadeIn 0.2s ease;
+  cursor: default;
+}
+
+.detalhe-conteudo { line-height: 1.8; }
+
+.detalhe-conteudo strong { color: var(--text); }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===================== CÉLULA AÇÕES ===================== */
+.actions-cell {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.action-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  transition: transform 0.15s, background 0.15s;
+  padding: 6px 8px;
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.action-btn:hover {
+  transform: scale(1.15);
+  background: var(--bg-hover);
+}
+
+/* ===================== NO RESULTS ===================== */
+.no-results {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+

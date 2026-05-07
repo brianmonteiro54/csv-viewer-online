@@ -1,183 +1,116 @@
-# 📊 Desempenho Acadêmico — AWS re/Start
+# 📊 Student Performance Analyzer
 
-Sistema web para análise e acompanhamento do desempenho dos alunos do programa AWS re/Start, desenvolvido para facilitar o monitoramento de Knowledge Checks (KCs), Labs e o envio de feedbacks personalizados por e-mail.
+Aplicação web para análise de desempenho de alunos em turmas AWS re/Start, construída em **JavaScript vanilla com ES Modules**, sem build step. Hospedável diretamente no GitHub Pages.
 
-> **Versão 2.0** — Validação de CSV, configurações personalizáveis, modal de envio em massa que contorna bloqueio de pop-ups, gráficos interativos, drag & drop, atalhos de teclado, detecção automática de contas de teste e alunos sem convite aceito, reprocessamento automático ao alterar configurações, e mensagem celebrativa para graduados.
-
----
-
-## 🚀 Funcionalidades
-
-### 📁 Carregamento inteligente
-- **Drag & drop** ou clique para selecionar
-- **Validação prévia** do arquivo CSV (colunas obrigatórias, tamanho máx. 10MB, encoding)
-- **Preview com resumo** antes de processar (alunos válidos, ignorados, KCs ativos, Labs ativos, graduados, limite mínimo)
-- **Avisos contextuais** para situações como turma pequena, e-mails inválidos, ou todas as atividades abaixo do threshold
-- **Histórico** dos últimos 5 arquivos carregados
-
-### ⚙️ Configurações personalizáveis (persistidas em `localStorage`)
-
-- **Limite mínimo de alunos** para considerar atividade ativa (padrão: 5)
-  - **Auto-ajuste** para turmas pequenas (se a turma tiver menos alunos que o limite, ele se adapta automaticamente)
-- **Critérios de status**:
-  - KC ≥ X% para "OK" (padrão: 70)
-  - Lab ≥ X% para "OK" (padrão: 95)
-- **Assunto do e-mail** customizável
-
-### 🚫 Filtros automáticos de alunos não-elegíveis
-
-O sistema detecta e filtra automaticamente, de forma transparente:
-
-| Tipo | Critério de detecção | Exemplo |
-|---|---|---|
-| **Conta de teste do Canvas** | Nome com padrão `aluno, Testar` ou e-mail é hash hex (sem `@`) | `aluno, Testar` (e-mail = `fe89a207...`) |
-| **Não aceitou convite** | `SIS Login ID` vazio **e** zero KCs/Labs preenchidos | Aluno fantasma na lista da turma |
-
-Esses casos aparecem como avisos no preview e não interferem nos cálculos da turma. **Critério conservador**: alunos sem e-mail mas com atividades preenchidas (caso edge real) são preservados na tabela.
-
-### 📊 Análise visual
-
-- **Tabela interativa** com filtros (clicáveis nos contadores), busca, ordenação, barra de progresso por aluno, e linha expansível mostrando KCs e Labs pendentes
-- **Gráficos toggleable**:
-  - 🥧 Distribuição por status (donut)
-  - 📈 Média da turma em KCs, Labs e Total (barras)
-
-### 🎯 Classificação automática
-
-| Status | Critério |
-|---|---|
-| 🟢 OK | KC ≥ critério **e** Lab ≥ critério |
-| 🔴 Crítico | KC < critério **e** Lab < critério |
-| 🟡 Atenção | Apenas um dos critérios atingido |
-| 🎓 Graduado | Coluna `Graduated Final Points` = 1 (independe de outras notas) |
-
-### 📧 Envio de e-mails (sem bloqueio do navegador)
-
-**Por aluno:**
-- 📋 Copiar mensagem personalizada (com pendências individuais)
-- ✉️ Abrir Outlook Web já preenchido (destinatário + assunto + corpo)
-
-**Em massa** (Críticos / Atenção):
-1. **📨 Um por um** — abre cada e-mail manualmente, sem bloqueio de pop-ups, com indicador "✅ Aberto"
-2. **📋 Copiar todos** — lista de e-mails separados por `;` para colar em Cco
-3. **💾 Exportar mensagens** — baixa `.txt` ou `.csv` com todas as mensagens prontas para revisão/arquivamento
-
-**Mensagem para graduados** 🎓 — texto celebrativo automático parabenizando pela conclusão (ao invés do template padrão de cobrança).
-
-### 📅 Datas de encerramento por turma (opcional)
-
-Configura uma data/hora limite para cada turma (campo `Section` do CSV — ex: `BRSAO244`). Quando configurada, alunos **não-graduados** dessa turma recebem um aviso adicional na mensagem:
-
-> *"ENCERRAMENTO NO CANVAS: DIA 20/05/2026 Às 23:59, APÓS ESTE PERÍODO, NÃO SERÁ POSSÍVEL REALIZAR ENTREGAS E O ALUNO SERÁ CONSIDERADO REPROVADO."*
-
-- **Por turma**: cada `Section` pode ter sua própria data
-- **Persistente**: salvo no `localStorage`, basta carregar o CSV da turma para o aviso aparecer automaticamente nas mensagens
-- **Não afeta graduados**: alunos com `Graduated Final Points = 1` continuam recebendo a mensagem celebrativa, sem aviso de prazo
-- Gerenciável em ⚙️ Configurações → "📅 Datas de encerramento por turma"
-
-### 📋 Cópia de desempenho em massa
-
-Cole uma lista de e-mails → recebe a tabela de desempenho **na mesma ordem** (Total, Lab, KC) em formato pronto para colar em planilha (separado por tab).
-
-### 🔄 Reprocessamento automático
-
-Sempre que algo muda no contexto de cálculo, o sistema **reprocessa automaticamente** o CSV em memória — mantendo a tela sempre consistente:
-
-- Ignorar/restaurar um aluno
-- Mudar o limite mínimo (`minAlunos`)
-- Importar lista de ignorados
-
-Isso evita o problema sutil de cálculos ficarem obsoletos: quando você ignora alunos, atividades no limite do threshold podem deixar de ser ativas, e os outros alunos têm suas médias e pendências recalculadas.
-
-### 🛡️ Lista de ignorados manualmente
-
-- Botão **🚫** em cada linha da tabela para ignorar um aluno (usa e-mail como chave; cai no ID Canvas se o e-mail estiver vazio)
-- **Timestamp ISO 8601** registrando quando cada aluno foi ignorado
-- **Lista gerenciável** no modal ⚙️ Configurações (ver, restaurar)
-- **Persistência:** salvo no `localStorage` do navegador
-- **Backup JSON:** botões de exportar/importar para preservar a lista entre máquinas, navegadores ou após limpeza de cache (essencial para cursos de 4+ meses)
-
-### 🌙 Dark Mode
-
-- Persistido no `localStorage`
-- Atalho: tecla **D**
-- Gráficos ajustam cores automaticamente
-
-### ⌨️ Atalhos de teclado
-
-| Atalho | Ação |
-|---|---|
-| `/` | Focar na busca |
-| `Esc` | Fechar modais e limpar busca |
-| `D` | Alternar tema escuro |
-
-### 📱 Responsividade
-
-Layout adapta-se automaticamente para desktop, tablet e mobile (colunas menos importantes ocultas em telas pequenas).
+> Lê arquivos CSV exportados do Canvas LMS, identifica alunos pendentes, gera mensagens personalizadas de acompanhamento e exporta resultados em CSV/Outlook.
 
 ---
 
-## 📐 Cálculo de desempenho
+## ✨ Funcionalidades
 
-### 📘 KCs
-Média aritmética dos KCs ativos. Atividades vazias contam como `0`.
-
-### 🧪 Labs
-Média dos Labs ativos, normalizada para escala 0–100% (cada lab é considerado feito = 100% se o valor for > 0).
-
-### 📊 Total
-Média aritmética entre KC e Lab.
-
-### ⏳ Pendência
-Atividade é considerada pendente apenas quando a célula está vazia. Qualquer valor preenchido (inclusive `0` ou `0,00`) é considerado realizado.
-
-### 🎯 Atividade ativa
-Um KC ou Lab só entra no cálculo se pelo menos N alunos válidos tiverem a célula preenchida (N configurável, padrão 5).
-
----
-
-## 🗂️ Formato do CSV esperado
-
-Arquivo deve ser exportado diretamente do **Canvas LMS**, sem alterações no Excel.
-
-| Coluna | Finalidade |
-|---|---|
-| `Student` | Nome do aluno (formato `Sobrenome, Nome`) |
-| `ID` | ID Canvas (usado como fallback se e-mail estiver vazio) |
-| `SIS Login ID` | E-mail do aluno |
-| `Section` | Código da turma (usado pela feature opcional de data de encerramento) |
-| `Graduated Final Points` | `1` indica aluno graduado |
-| `NNN...KC...` | Knowledge Checks (colunas começando com número e contendo `KC`) |
-| `NNN...Lab...` | Laboratórios (colunas começando com número e contendo `Lab`) |
-
-A linha `Points Possible` é ignorada automaticamente.
+- 📥 **Upload via drag & drop** ou seleção de arquivo CSV
+- 🔍 **Pré-visualização** com validação antes do processamento
+- 📊 **Tabela ordenável e filtrável** por status (graduados, pendentes, em risco, ignorados)
+- 🎯 **Critérios configuráveis** de aprovação (Knowledge Checks e Labs)
+- 📝 **Geração automática de mensagens** personalizadas com 3 variantes (graduado, sem pendências, com pendências)
+- 📧 **Envio em massa** ou individual via Outlook (mailto)
+- 📈 **Gráficos** de distribuição por status e atividades pendentes (Chart.js)
+- 🌙 **Modo escuro** com persistência
+- 📜 **Histórico** dos últimos uploads (localStorage)
+- 🚫 **Lista de alunos ignorados** com import/export
+- 📅 **Avisos de encerramento** por turma
+- ⌨️ **Atalhos de teclado** (`/` busca, `Esc` fecha modais, `D` modo escuro)
+- 💾 **100% client-side** nenhum dado sai do navegador
 
 ---
 
-## 📁 Estrutura do projeto
+## 🏗️ Arquitetura
+
+Refatorada em **camadas com responsabilidades claras**, seguindo princípios de separação de concerns. Sem build step usa ES Modules nativos do navegador.
 
 ```
-📦 student-performance-analyzer
- ┣ 📄 index.html       # Estrutura da interface (modais, tabela, gráficos)
- ┣ 📄 style.css        # Estilos, dark mode e responsividade
- ┣ 📄 app.js           # Lógica principal (validação, processamento, gráficos, envio)
- ┣ 📁 assets/
- ┃ ┣ 🖼️ anderson-albuquerque.jpg
- ┃ ┗ 🖼️ brian-richard.jpg
- ┗ 📄 README.md
+src/
+├── main.js              # Entry point registry de actions e event delegation
+├── state.js             # Estado global centralizado
+├── config.js            # Configurações persistidas (localStorage)
+│
+├── utils/               # Utilitários puros, sem dependências de domínio
+│   ├── dom.js           # $, $$, byId, setHidden, delegate
+│   ├── string.js        # normalize, normalizarSectionKey
+│   └── format.js        # fixEncoding, formatBytes, getSaudacao, formatarEncerramento
+│
+├── core/                # Lógica de domínio pura (testável, sem DOM)
+│   ├── activity.js      # isKC, isLab, formatarNomeAtividade
+│   ├── student.js       # isContaTesteAutomatica, isAlunoIgnorado
+│   ├── csv.js           # validateCSV, processCSV
+│   ├── status.js        # getStatus + labels/ícones/cores
+│   └── message.js       # gerarMensagem (3 variantes)
+│
+├── services/            # Side-effects (clipboard, storage, exports)
+│   ├── clipboard.js     # Cópia + abertura do Outlook
+│   ├── history.js       # Histórico de uploads
+│   ├── ignored.js       # Gerenciamento da lista de ignorados
+│   ├── encerramentos.js # Avisos de encerramento por turma
+│   └── exporter.js      # Exportação CSV / mensagens
+│
+└── ui/                  # Camada de apresentação (lê/escreve no DOM)
+    ├── toast.js         # Notificações
+    ├── theme.js         # Tema claro/escuro
+    ├── modal.js         # Sistema de modais
+    ├── progress.js      # Barra de progresso
+    ├── dropzone.js      # Drag & drop
+    ├── preview.js       # Pré-visualização do CSV
+    ├── table.js         # Renderização e ordenação da tabela
+    ├── charts.js        # Gráficos Chart.js
+    ├── settings.js      # Modal de configurações
+    ├── envio.js         # Modal de envio em massa
+    ├── area-copia.js    # Área de cópia rápida
+    └── shortcuts.js     # Atalhos de teclado
+
+styles/
+├── main.css             # Entry @imports na ordem de cascata
+├── base/
+│   ├── variables.css    # Custom properties (light + dark)
+│   └── reset.css        # Reset/normalize
+├── layout/
+│   ├── header.css
+│   └── footer.css
+└── components/          # Um arquivo por bloco visual
+    ├── upload.css, table.css, modal.css, ...
+    └── responsive.css   # Media queries
 ```
+
+### Decisões de design
+
+
+- **Event delegation com `data-action`** todos os listeners centralizados em `main.js`. Zero `onclick` inline (incompatível com `type="module"` por causa do escopo).
+- **CSS modular com `@import`** divisão por responsabilidade visual. Ordem garantida no `main.css`.
+- **Camadas com dependências unidirecionais**  `ui` depende de `services` e `core`; `services` depende de `core`; `core` é puro. Nada depende de `ui`.
+- **Estado centralizado** em `state.js` fonte única de verdade, evita variáveis globais espalhadas.
 
 ---
 
-## 🛠️ Tecnologias utilizadas
 
-| Tecnologia        | Finalidade                  |
-| ----------------- | --------------------------- |
-| HTML5             | Estrutura da aplicação      |
-| CSS3              | Estilização e dark mode     |
-| JavaScript (ES6+) | Lógica da aplicação         |
-| PapaParse         | Leitura e parsing do CSV    |
-| Chart.js          | Gráficos                    |
+## 📦 Dependências externas (CDN)
+
+- [PapaParse](https://www.papaparse.com/) parser CSV robusto
+- [Chart.js](https://www.chartjs.org/) gráficos
+
+Ambas carregadas via CDN no `index.html`. 
+
+---
+
+## 📝 Formato esperado do CSV
+
+Exportação padrão do Canvas LMS contendo (no mínimo) as colunas:
+- `Student` (nome do aluno)
+- `SIS Login ID` (email institucional)
+- `Section` (turma ex: `AWS-RESTART-BRSAO-2024-01`)
+- Colunas de atividades (Knowledge Checks e Labs)
+
+A aplicação detecta automaticamente:
+- Contas de teste do Canvas (nome em padrão de teste, hash hex como email, sem login + zero atividades)
+- Normalização `BRASAO` → `BRSAO`
 
 ---
 
@@ -187,13 +120,13 @@ A linha `Points Possible` é ignorada automaticamente.
   <tr>
     <td align="center">
       <a href="https://www.linkedin.com/in/anderson-garcia-albuquerque/" target="_blank">
-        <img src="assets/anderson-albuquerque.jpg" width="90" style="border-radius:50%"><br>
+        <img src="kc/assets/anderson-albuquerque.jpg" width="90" style="border-radius:50%"><br>
         <strong>Anderson Albuquerque</strong>
       </a>
     </td>
     <td align="center">
       <a href="https://www.linkedin.com/in/brianrichard1/" target="_blank">
-        <img src="assets/brian-richard.jpg" width="90" style="border-radius:50%"><br>
+        <img src="kc/assets/brian-richard.jpg" width="90" style="border-radius:50%"><br>
         <strong>Brian Richard</strong>
       </a>
     </td>
