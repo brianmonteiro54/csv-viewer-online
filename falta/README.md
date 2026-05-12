@@ -93,5 +93,5 @@ Toda vez que você confirma manualmente um caso ambíguo (ex: escolher entre doi
 
 - Tudo é salvo no `localStorage` do navegador (nada vai para servidor nenhum)
 - O tema (claro/escuro) é lembrado
-- Para apagar uma turma: **Editar lista → Apagar turma**
+- Para apagar uma turma: abra a turma e clique em **🗑️ Apagar turma** (ao lado de Editar lista)
 - Para esquecer um apelido aprendido: **🧠 Apelidos → Esquecer**

@@ -264,6 +264,7 @@ function renderReviewCard(parent, m, cls, decisions, userTouched, repaint) {
     ? '<span class="review-status-badge">✓ Salvo</span>'
     : '<span class="review-status-badge">Precisa decisão</span>';
 
+  const visSel = currentDecision?.type === 'visitor' ? 'selected' : '';
   let cardHtml = `
     <div class="review-head">
       <span class="meet-chip">${escapeHtml(m.meet)}</span>
@@ -272,6 +273,8 @@ function renderReviewCard(parent, m, cls, decisions, userTouched, repaint) {
     </div>
     <select aria-label="Escolher correspondência para ${escapeHtml(m.meet)}">
       <option value="__skip__">— ainda não decidi —</option>
+      <option value="__visitor__" ${visSel}>👤 Não é aluno (professor, coordenador, visitante)</option>
+      <option disabled>──────────</option>
   `;
 
   // Top candidatos em destaque
@@ -285,24 +288,20 @@ function renderReviewCard(parent, m, cls, decisions, userTouched, repaint) {
   // Demais alunos ordenados
   const others = cls.students.filter(s => !candIds.has(s)).sort((a, b) => a.localeCompare(b, 'pt-BR'));
   if (others.length) {
-    cardHtml += `<option disabled>──────────</option>`;
+    if (candIds.size) cardHtml += `<option disabled>──────────</option>`;
     for (const s of others) {
       const sel = (currentDecision?.type === 'student' && currentDecision.studentName === s) ? 'selected' : '';
       cardHtml += `<option value="${escapeHtml(s)}" ${sel}>${escapeHtml(s)}</option>`;
     }
   }
 
-  // Opção "visitante"
-  cardHtml += `<option disabled>──────────</option>`;
-  const visSel = currentDecision?.type === 'visitor' ? 'selected' : '';
-  cardHtml += `<option value="__visitor__" ${visSel}>Não é aluno (visitante)</option>`;
   cardHtml += `</select>`;
 
   // Feedback "✓ Salvo"
   let feedbackTarget = '';
   if (isSaved) {
     if (currentDecision?.type === 'student') feedbackTarget = `<strong>${escapeHtml(currentDecision.studentName)}</strong>`;
-    else if (currentDecision?.type === 'visitor') feedbackTarget = '<strong>visitante</strong>';
+    else if (currentDecision?.type === 'visitor') feedbackTarget = '<strong>não é aluno</strong>';
   }
   cardHtml += `
     <div class="review-feedback">
@@ -329,7 +328,7 @@ function renderReviewCard(parent, m, cls, decisions, userTouched, repaint) {
       cls.aliases[k] = '__visitor__';
       userTouched.add(m.meet);
       saveStore(STORE);
-      toast(`✓ "${m.meet}" → visitante. Lembrado para a próxima.`, 'success');
+      toast(`✓ "${m.meet}" → não é aluno. Lembrado para a próxima.`, 'success');
     } else {
       decisions[m.meet] = { type: 'student', studentName: v };
       cls.aliases[k] = v;

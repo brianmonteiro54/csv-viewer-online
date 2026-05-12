@@ -2,10 +2,10 @@
  * View "Detalhes da turma" — mostra alunos, upload de CSV e dropzone.
  * Quando um CSV é processado, navega para a view de resultados.
  */
-import { STORE } from '../storage.js';
+import { STORE, saveStore } from '../storage.js';
 import { escapeHtml, toast } from '../ui.js';
 import { navigate } from '../router.js';
-import { openAliasesModal } from '../modals.js';
+import { openAliasesModal, openConfirm } from '../modals.js';
 import { parseCSV, parseMeetingInfo } from '../csv-parser.js';
 import { matchOne } from '../name-matching.js';
 
@@ -26,6 +26,7 @@ export function renderClass(root, classId) {
       </div>
       <div class="actions">
         <button class="btn-ghost btn-sm" id="editBtn">✏️ Editar lista</button>
+        <button class="btn-ghost btn-sm danger-ghost" id="deleteBtn">🗑️ Apagar turma</button>
         ${aliasCount ? `<button class="btn-ghost btn-sm" id="aliasesBtn">🧠 Apelidos</button>` : ''}
       </div>
     </div>
@@ -54,6 +55,14 @@ export function renderClass(root, classId) {
 
   document.getElementById('back').onclick = () => navigate({ name: 'home' });
   document.getElementById('editBtn').onclick = () => navigate({ name: 'editClass', classId });
+  document.getElementById('deleteBtn').onclick = () => {
+    openConfirm(`Apagar a turma "${cls.name}"?`, 'Esta ação não pode ser desfeita.', () => {
+      delete STORE.classes[classId];
+      saveStore(STORE);
+      toast('Turma apagada', 'info');
+      navigate({ name: 'home' });
+    });
+  };
   if (aliasCount) document.getElementById('aliasesBtn').onclick = () => openAliasesModal(cls);
 
   // Render dos alunos em colunas

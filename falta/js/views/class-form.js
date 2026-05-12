@@ -5,7 +5,6 @@
 import { STORE, saveStore, uid } from '../storage.js';
 import { escapeHtml, toast } from '../ui.js';
 import { navigate } from '../router.js';
-import { openConfirm } from '../modals.js';
 
 export function renderClassForm(root, classId) {
   const existing = classId ? STORE.classes[classId] : null;
@@ -24,12 +23,9 @@ export function renderClassForm(root, classId) {
         <textarea id="studentList" placeholder="Agatha Luiza Souza Da Costa&#10;Alexsandro Oliveira Ribas&#10;Aline Suelen Da Silva&#10;..." spellcheck="false">${escapeHtml((existing?.students || []).join('\n'))}</textarea>
         <span class="hint">Cole os nomes diretamente. Linhas em branco são ignoradas.</span>
       </div>
-      <div class="row-flex" style="justify-content: space-between; margin-top: 18px;">
-        <div class="row-flex">
-          <button class="btn-primary" id="saveBtn">${isEdit ? '💾 Salvar alterações' : '✅ Criar turma'}</button>
-          <button class="btn-ghost" id="cancelBtn">Cancelar</button>
-        </div>
-        ${isEdit ? `<button class="btn-danger btn-sm" id="deleteBtn">🗑️ Apagar turma</button>` : ''}
+      <div class="row-flex" style="margin-top: 18px;">
+        <button class="btn-primary" id="saveBtn">${isEdit ? '💾 Salvar alterações' : '✅ Criar turma'}</button>
+        <button class="btn-ghost" id="cancelBtn">Cancelar</button>
       </div>
     </div>
   `;
@@ -60,15 +56,4 @@ export function renderClassForm(root, classId) {
       navigate({ name: 'class', classId: id });
     }
   };
-
-  if (isEdit) {
-    document.getElementById('deleteBtn').onclick = () => {
-      openConfirm(`Apagar a turma "${existing.name}"?`, 'Esta ação não pode ser desfeita.', () => {
-        delete STORE.classes[classId];
-        saveStore(STORE);
-        toast('Turma apagada', 'info');
-        navigate({ name: 'home' });
-      });
-    };
-  }
 }

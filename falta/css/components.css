@@ -32,6 +32,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
   border: 1px solid var(--border);
 }
 .btn-ghost:hover { background: var(--bg-hover); border-color: var(--border-strong); color: var(--text); }
+.btn-ghost.danger-ghost { color: var(--danger); }
+.btn-ghost.danger-ghost:hover {
+  background: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--danger);
+}
 .btn-link {
   background: none;
   border: none;
