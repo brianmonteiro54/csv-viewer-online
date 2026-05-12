@@ -274,6 +274,38 @@ body.dark .review-card.saved .meet-chip { background: var(--bg-card); }
   color: white;
 }
 
+/* Botão "✓ Confirmar" — aparece no header do card quando ainda não foi salvo.
+   Permite confirmar o palpite pré-preenchido sem precisar mexer no dropdown. */
+.review-confirm-btn {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--success);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.2s;
+}
+.review-confirm-btn:hover {
+  background: #15803d;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+.review-confirm-btn:active { transform: translateY(0); }
+.review-confirm-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--success-soft);
+}
+
 .review-card select {
   background: var(--bg-input);
   border: 1px solid var(--border);

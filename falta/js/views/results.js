@@ -260,16 +260,16 @@ function renderReviewCard(parent, m, cls, decisions, userTouched, repaint) {
   else if (m.kind === 'ambiguous') questionText = 'pode ser mais de um aluno';
   else                             questionText = 'não consegui identificar';
 
-  const statusBadge = isSaved
+  const headerAction = isSaved
     ? '<span class="review-status-badge">✓ Salvo</span>'
-    : '<span class="review-status-badge">Precisa decisão</span>';
+    : '<button type="button" class="review-confirm-btn" data-confirm-btn>✓ Confirmar</button>';
 
   const visSel = currentDecision?.type === 'visitor' ? 'selected' : '';
   let cardHtml = `
     <div class="review-head">
       <span class="meet-chip">${escapeHtml(m.meet)}</span>
       <span class="review-question">${questionText}</span>
-      ${statusBadge}
+      ${headerAction}
     </div>
     <select aria-label="Escolher correspondência para ${escapeHtml(m.meet)}">
       <option value="__skip__">— ainda não decidi —</option>
@@ -312,8 +312,9 @@ function renderReviewCard(parent, m, cls, decisions, userTouched, repaint) {
   card.innerHTML = cardHtml;
 
   const select = card.querySelector('select');
-  select.addEventListener('change', () => {
-    const v = select.value;
+
+  // Lógica de salvamento — usada tanto pelo change do select quanto pelo botão "Confirmar"
+  function commitDecision(v) {
     const k = normalize(cleanName(m.meet));
     cls.aliases = cls.aliases || {};
 
@@ -353,7 +354,23 @@ function renderReviewCard(parent, m, cls, decisions, userTouched, repaint) {
         }
       }, 10);
     }
-  });
+  }
+
+  select.addEventListener('change', () => commitDecision(select.value));
+
+  // Botão "✓ Confirmar" — para quando o palpite pré-preenchido já está correto
+  // e o professor não precisa mexer no dropdown.
+  const confirmBtn = card.querySelector('[data-confirm-btn]');
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', () => {
+      if (select.value === '__skip__') {
+        toast('Escolha um aluno na lista antes de confirmar', 'warning');
+        select.focus();
+        return;
+      }
+      commitDecision(select.value);
+    });
+  }
 
   parent.appendChild(card);
 }
