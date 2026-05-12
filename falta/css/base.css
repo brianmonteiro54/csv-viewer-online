@@ -1,0 +1,98 @@
+/* ============================================================
+   VARIÁVEIS DE TEMA (claro + escuro)
+   ============================================================ */
+:root {
+  --bg:           #f5f7fa;
+  --bg-card:      #ffffff;
+  --bg-hover:     #e9f2ff;
+  --bg-subtle:    #f9f9f9;
+  --bg-input:     #ffffff;
+  --text:         #1f2937;
+  --text-muted:   #6b7280;
+  --text-soft:    #9ca3af;
+  --border:       #e5e7eb;
+  --border-strong:#d1d5db;
+  --primary:      #2563eb;
+  --primary-hov:  #1d4ed8;
+  --primary-soft: #dbeafe;
+  --secondary:    #6b7280;
+  --success:      #16a34a;
+  --success-soft: #dcfce7;
+  --warning:      #f59e0b;
+  --warning-soft: #fef3c7;
+  --danger:       #dc2626;
+  --danger-soft:  #fee2e2;
+  --shadow-sm:    0 1px 3px rgba(0,0,0,0.06);
+  --shadow:       0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg:    0 12px 32px rgba(0,0,0,0.12);
+  --radius:       10px;
+  --radius-lg:    14px;
+}
+body.dark {
+  --bg:           #0f172a;
+  --bg-card:      #1e293b;
+  --bg-hover:     #334155;
+  --bg-subtle:    #1a2332;
+  --bg-input:     #0f172a;
+  --text:         #e2e8f0;
+  --text-muted:   #94a3b8;
+  --text-soft:    #64748b;
+  --border:       #334155;
+  --border-strong:#475569;
+  --primary:      #3b82f6;
+  --primary-hov:  #60a5fa;
+  --primary-soft: #1e3a8a;
+  --success:      #22c55e;
+  --success-soft: rgba(34, 197, 94, 0.12);
+  --warning-soft: rgba(245, 158, 11, 0.12);
+  --danger-soft:  rgba(239, 68, 68, 0.12);
+  --shadow-sm:    0 1px 3px rgba(0,0,0,0.3);
+  --shadow:       0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg:    0 12px 32px rgba(0,0,0,0.5);
+}
+
+/* ============================================================ RESET */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+
+body {
+  font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding: 16px;
+  line-height: 1.5;
+  transition: background 0.3s, color 0.3s;
+  min-height: 100vh;
+}
+@media (min-width: 768px) { body { padding: 20px 28px; } }
+
+.shell { max-width: 1100px; margin: 0 auto; }
+
+/* ============================================================ FOOTER */
+footer {
+  margin-top: 60px;
+  padding: 16px 0;
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+
+/* ============================================================ HELPERS */
+.hidden { display: none !important; }
+.row-flex { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.flex-1 { flex: 1; }
+
+/* ============================================================ ANIMATIONS */
+@keyframes savedPulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+.review-card.just-saved { animation: savedPulse 0.4s ease; }
+
+@keyframes modalFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}

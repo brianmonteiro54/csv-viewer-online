@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Node (caso alguém rode um server local)
+node_modules/
+
+# Local
+*.local

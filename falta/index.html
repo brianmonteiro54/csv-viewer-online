@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Identifique automaticamente quem faltou na aula a partir do CSV do Google Meet">
+  <title>Presença — Identificador de faltas</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✅</text></svg>">
+
+  <!-- Estilos modulares (carregados em ordem: variáveis → componentes → layout) -->
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/layout.css">
+</head>
+<body>
+
+<div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<div class="shell">
+
+  <header class="page-header">
+    <div class="header-title" id="brand">
+      <h1>✅ Quem faltou hoje?</h1>
+      <span class="header-subtitle">Meet · Identificação automática</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn-icon" id="helpBtn" title="Ajuda" aria-label="Ajuda">❓</button>
+      <button class="btn-icon" id="darkToggleBtn" title="Alternar tema" aria-label="Alternar tema">🌙</button>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <footer>
+    <p>Reconhece nomes parciais, sobrenomes, apelidos e typos automaticamente. Tudo salvo no navegador.</p>
+  </footer>
+</div>
+
+<div id="modalRoot"></div>
+
+<!-- App como ES module: imports/exports nativos do navegador -->
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
