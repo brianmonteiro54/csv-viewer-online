@@ -12,11 +12,16 @@
  *   - aprende o alias na turma (cls.aliases) e persiste
  *   - re-paint da tela inteira (paint()) — barato porque DOM é pequeno
  *   - anima o card com a classe just-saved
+ *
+ * Botão "📧 Enviar e-mail" — só aparece nas linhas da seção Faltaram se a
+ * turma foi criada com o modo de e-mails habilitado (cls.emails existe).
+ * Para turmas só-nome, nada muda em relação à versão anterior.
  */
 import { STORE, saveStore } from '../storage.js';
 import { escapeHtml, toast } from '../ui.js';
 import { navigate } from '../router.js';
 import { normalize, cleanName } from '../name-matching.js';
+import { buildOutlookComposeUrl } from '../email-helper.js';
 
 export function renderResults(root, classId, payload) {
   const cls = STORE.classes[classId];
@@ -102,7 +107,7 @@ export function renderResults(root, classId, payload) {
     };
 
     renderReviewArea(payload, cls, decisions, userTouched, paint);
-    renderAbsentArea(stats);
+    renderAbsentArea(stats, cls);
     renderPresentArea(payload, decisions, isFromLearned);
     renderVisitorArea(payload, decisions, isFromLearned);
   }
@@ -135,21 +140,54 @@ function renderReviewArea(payload, cls, decisions, userTouched, repaint) {
   for (const m of needReview) renderReviewCard(list, m, cls, decisions, userTouched, repaint);
 }
 
-function renderAbsentArea(stats) {
+/**
+ * Pinta a seção "Faltaram".
+ * Quando a turma tem `cls.emails`, cada linha ganha um botão "📧 Enviar e-mail"
+ * que abre o Outlook já pré-preenchido para aquele aluno.
+ */
+function renderAbsentArea(stats, cls) {
   const absentArea = document.getElementById('absentArea');
+  const emailsMap = cls.emails || {};
+  const hasEmailFeature = Object.keys(emailsMap).length > 0;
+
   absentArea.innerHTML = `
     <div class="section-head">
       <h2>❌ Faltaram</h2>
       <span class="count">${stats.absent.length}</span>
     </div>
   `;
+
   if (stats.absent.length) {
     const listEl = document.createElement('div');
     listEl.className = 'list';
     for (const s of [...stats.absent].sort((a, b) => a.localeCompare(b, 'pt-BR'))) {
       const row = document.createElement('div');
       row.className = 'row';
-      row.innerHTML = `<div class="name"><b>${escapeHtml(s)}</b></div><span class="badge danger">Faltou</span>`;
+
+      // Constrói o conteúdo da direita: badge + (opcional) botão de e-mail
+      let rightHtml = '';
+      if (hasEmailFeature) {
+        const email = emailsMap[s];
+        if (email) {
+          rightHtml = `
+            <a class="btn-email-send"
+               href="${escapeHtml(buildOutlookComposeUrl(email, s))}"
+               target="_blank" rel="noopener"
+               title="Abrir Outlook para enviar e-mail a ${escapeHtml(s)} (${escapeHtml(email)})">
+              📧 Enviar e-mail
+            </a>
+            <span class="badge danger">Faltou</span>`;
+        } else {
+          // Turma tem feature de e-mail, mas esse aluno específico não tem e-mail
+          rightHtml = `
+            <span class="email-missing" title="Este aluno não tem e-mail cadastrado">sem e-mail</span>
+            <span class="badge danger">Faltou</span>`;
+        }
+      } else {
+        rightHtml = `<span class="badge danger">Faltou</span>`;
+      }
+
+      row.innerHTML = `<div class="name"><b>${escapeHtml(s)}</b></div>${rightHtml}`;
       listEl.appendChild(row);
     }
     absentArea.appendChild(listEl);

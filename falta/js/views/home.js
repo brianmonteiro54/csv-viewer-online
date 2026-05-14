@@ -38,10 +38,14 @@ export function renderHome(root) {
   for (const c of classes) {
     const studentCount = (c.students || []).length;
     const aliasCount = Object.keys(c.aliases || {}).length;
+    const emailCount = Object.keys(c.emails || {}).length;
     const card = document.createElement('button');
     card.className = 'class-card';
 
     let statsHtml = `<span class="pill">${studentCount} alunos</span>`;
+    if (emailCount) {
+      statsHtml += `<span class="pill mail">📧 ${emailCount} e-mail${emailCount === 1 ? '' : 's'}</span>`;
+    }
     if (aliasCount) {
       statsHtml += `<span class="pill learn">🧠 ${aliasCount} apelido${aliasCount === 1 ? '' : 's'}</span>`;
     }

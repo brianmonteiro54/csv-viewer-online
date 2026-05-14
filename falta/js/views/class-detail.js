@@ -13,6 +13,7 @@ export function renderClass(root, classId) {
   const cls = STORE.classes[classId];
   if (!cls) { navigate({ name: 'home' }); return; }
   const aliasCount = Object.keys(cls.aliases || {}).length;
+  const emailCount = Object.keys(cls.emails || {}).length;
 
   root.innerHTML = `
     <a class="back-link" id="back">← Todas as turmas</a>
@@ -21,6 +22,7 @@ export function renderClass(root, classId) {
         <h2 class="class-h1">${escapeHtml(cls.name)}</h2>
         <div class="class-meta">
           <span class="pill">${cls.students.length} alunos</span>
+          ${emailCount ? `<span class="pill mail">📧 ${emailCount} com e-mail</span>` : ''}
           ${aliasCount ? `<span class="pill learn">🧠 ${aliasCount} apelido${aliasCount === 1 ? '' : 's'} aprendido${aliasCount === 1 ? '' : 's'}</span>` : ''}
         </div>
       </div>

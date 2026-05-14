@@ -5,6 +5,14 @@
 import { STORE, saveStore } from './storage.js';
 import { escapeHtml, toast } from './ui.js';
 import { render } from './router.js';
+import {
+  TEMPLATE_PLACEHOLDERS,
+  DEFAULT_SUBJECT_TEMPLATE,
+  DEFAULT_BODY_TEMPLATE,
+  getEmailTemplate,
+  applyTemplate,
+  capitalizeWords
+} from './email-helper.js';
 
 /** Helper para fechar qualquer modal (limpa o root). */
 function closeModalRoot() {
@@ -101,6 +109,12 @@ export function openHelpModal() {
             <li>Instrutores e bots são detectados automaticamente</li>
           </ul>
           <p><strong>4. Confirme casos ambíguos.</strong> Quando você escolhe um nome, a ferramenta <strong>aprende</strong> — e da próxima aula reconhece sem perguntar.</p>
+          <p style="background: var(--success-soft); padding: 10px 14px; border-radius: 8px; font-size: 13.5px;">
+            📧 <strong>Modo com e-mails (opcional):</strong> ao criar a turma, ative o toggle para colar
+            <code>Nome &nbsp;TAB&nbsp; email@dominio.com</code> em cada linha. Depois, na tela de resultado,
+            cada aluno que faltou ganha um botão <strong>“Enviar e-mail”</strong> que abre o Outlook
+            já com a mensagem pronta.
+          </p>
           <p style="background: var(--primary-soft); padding: 10px 14px; border-radius: 8px; font-size: 13.5px;">
             🧠 <strong>Tudo é salvo no seu navegador.</strong> Para usar em outro computador, recrie a turma lá.
           </p>
@@ -144,3 +158,159 @@ export function openConfirm(title, message, onYes) {
     if (e.target.id === 'modalBackdrop') close();
   };
 }
+
+/**
+ * Modal de configuração do template de e-mail.
+ * Permite editar o ASSUNTO e a MENSAGEM usados pelo botão "📧 Enviar e-mail".
+ * O template é salvo em STORE.emailTemplate (localStorage).
+ *
+ * Recursos:
+ *  - Chips clicáveis com os placeholders disponíveis ({nome}, {data} etc).
+ *    Clicar insere o placeholder na posição do cursor do campo focado.
+ *  - "Restaurar padrão" volta o template ao texto original.
+ *  - Preview mostra o resultado final substituindo os placeholders por um
+ *    aluno-exemplo.
+ */
+export function openEmailSettingsModal() {
+  const root = document.getElementById('modalRoot');
+  const current = getEmailTemplate();
+  // Estado local (não persiste até o usuário clicar Salvar)
+  let subject = current.subject;
+  let body = current.body;
+  // Qual campo o usuário tocou por último (pra inserção de placeholder)
+  let lastFocused = 'body';
+
+  function paint() {
+    // Preview com aluno-exemplo
+    const today = new Date();
+    const sampleVars = {
+      nome:          'Brian Richard Ribeiro Monteiro',
+      primeiro_nome: 'Brian',
+      data:          today.toLocaleDateString('pt-BR'),
+      saudacao:      today.getHours() >= 18 ? 'Boa noite'
+                    : today.getHours() >= 12 ? 'Boa tarde' : 'Bom dia'
+    };
+    const previewSubject = applyTemplate(subject, sampleVars);
+    const previewBody = applyTemplate(body, sampleVars);
+
+    const placeholdersHtml = TEMPLATE_PLACEHOLDERS.map(p => `
+      <button type="button" class="placeholder-chip" data-placeholder="${escapeHtml(p.key)}" title="${escapeHtml(p.desc)}">
+        <code>${escapeHtml(p.key)}</code>
+        <span class="placeholder-chip-desc">${escapeHtml(p.desc)}</span>
+      </button>
+    `).join('');
+
+    root.innerHTML = `
+      <div class="modal" id="modalBackdrop">
+        <div class="modal-content email-settings-modal">
+          <div class="modal-header">
+            <h2>⚙️ Configurar mensagem de e-mail</h2>
+            <button class="modal-close" id="closeModal">✕</button>
+          </div>
+          <div class="modal-body">
+            <p style="margin: 0 0 12px; font-size: 13.5px; color: var(--text-muted);">
+              O botão <strong>📧 Enviar e-mail</strong> nos resultados usará este template.
+              Clique num marcador abaixo para inserir no campo onde está o cursor.
+            </p>
+
+            <div class="placeholder-chips" id="placeholderChips">${placeholdersHtml}</div>
+
+            <div class="field">
+              <label for="tmplSubject">Assunto</label>
+              <input type="text" id="tmplSubject" value="${escapeHtml(subject)}" spellcheck="false">
+            </div>
+
+            <div class="field">
+              <label for="tmplBody">Mensagem</label>
+              <textarea id="tmplBody" spellcheck="false" style="min-height: 260px;">${escapeHtml(body)}</textarea>
+            </div>
+
+            <details class="email-preview">
+              <summary>👁 Pré-visualizar com aluno-exemplo</summary>
+              <div class="email-preview-content">
+                <div><strong>Assunto:</strong> ${escapeHtml(previewSubject)}</div>
+                <pre>${escapeHtml(previewBody)}</pre>
+              </div>
+            </details>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-ghost" id="resetBtn" style="margin-right: auto;">🔄 Restaurar padrão</button>
+            <button class="btn-ghost" id="cancelBtn">Cancelar</button>
+            <button class="btn-primary" id="saveBtn">💾 Salvar</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const close = closeModalRoot;
+    document.getElementById('closeModal').onclick = close;
+    document.getElementById('cancelBtn').onclick = close;
+    document.getElementById('modalBackdrop').onclick = (e) => {
+      if (e.target.id === 'modalBackdrop') close();
+    };
+
+    const subjectInput = document.getElementById('tmplSubject');
+    const bodyTextarea = document.getElementById('tmplBody');
+
+    // Mantém o estado local sincronizado com o que o usuário digita
+    subjectInput.addEventListener('input', () => { subject = subjectInput.value; });
+    bodyTextarea.addEventListener('input', () => { body = bodyTextarea.value; });
+
+    // Rastreia qual campo foi tocado por último (pra inserção via chip)
+    subjectInput.addEventListener('focus', () => { lastFocused = 'subject'; });
+    bodyTextarea.addEventListener('focus', () => { lastFocused = 'body'; });
+
+    // Chips de placeholder — inserem o texto na posição do cursor
+    document.querySelectorAll('.placeholder-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const text = chip.dataset.placeholder;
+        const target = lastFocused === 'subject' ? subjectInput : bodyTextarea;
+        const start = target.selectionStart ?? target.value.length;
+        const end = target.selectionEnd ?? target.value.length;
+        const before = target.value.slice(0, start);
+        const after = target.value.slice(end);
+        target.value = before + text + after;
+        // Atualiza o estado local
+        if (lastFocused === 'subject') subject = target.value;
+        else body = target.value;
+        // Move o cursor pra depois do texto inserido
+        const newPos = start + text.length;
+        target.focus();
+        target.setSelectionRange(newPos, newPos);
+        // Re-renderiza para atualizar o preview
+        paint();
+      });
+    });
+
+    // Mantém o details aberto se já estava aberto antes do repaint
+    // (chip click → paint → state perdido). Pequeno bônus: tentar restaurar
+    // o foco no campo que estava ativo, depois do repaint.
+    setTimeout(() => {
+      const target = lastFocused === 'subject'
+        ? document.getElementById('tmplSubject')
+        : document.getElementById('tmplBody');
+      if (target && document.activeElement !== target) {
+        // Não força foco se algo já está focado — evita "ladroar" o foco do chip
+      }
+    }, 0);
+
+    document.getElementById('resetBtn').onclick = () => {
+      subject = DEFAULT_SUBJECT_TEMPLATE;
+      body = DEFAULT_BODY_TEMPLATE;
+      paint();
+      toast('Template restaurado para o padrão (não esquece de Salvar)', 'info');
+    };
+
+    document.getElementById('saveBtn').onclick = () => {
+      if (!subject.trim()) { toast('O assunto não pode ficar vazio', 'warning'); return; }
+      if (!body.trim())    { toast('A mensagem não pode ficar vazia', 'warning'); return; }
+      STORE.emailTemplate = { subject, body };
+      saveStore(STORE);
+      close();
+      toast('Template de e-mail salvo', 'success');
+    };
+  }
+
+  paint();
+}
+
